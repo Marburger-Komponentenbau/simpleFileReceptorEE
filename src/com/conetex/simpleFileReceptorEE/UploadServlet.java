@@ -27,8 +27,6 @@ public class UploadServlet extends HttpServlet {
        
 	private static String uploadPageHtml = "C://_//02 Eclipse JEE Workspace//simpleFileReceptorEE//the simpleFileReceptor dropzone.htm";
 	
-	
-	
     /**
      * @see HttpServlet#HttpServlet()
      */
