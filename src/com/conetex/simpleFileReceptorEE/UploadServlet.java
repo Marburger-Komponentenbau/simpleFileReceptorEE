@@ -1,14 +1,14 @@
 package com.conetex.simpleFileReceptorEE;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -23,9 +23,14 @@ import javax.servlet.http.Part;
 @WebServlet("/UploadServlet")
 @MultipartConfig
 public class UploadServlet extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
+
+	private static final String dataFolder = "C://_//02 Eclipse JEE Workspace//_GitHub//simpleFileReceptorEE//data//";
        
-	private static String uploadPageHtml = "C://_//02 Eclipse JEE Workspace//simpleFileReceptorEE//the simpleFileReceptor dropzone.htm";
+	private static final String uploadPageHtmlLocation = "C://_//02 Eclipse JEE Workspace//_GitHub//simpleFileReceptorEE//the simpleFileReceptor dropzone.htm";
+	
+	private static String uploadPageHtml = "";
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -34,14 +39,14 @@ public class UploadServlet extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
         
-		File idxFile = new File(uploadPageHtml);
+		File idxFile = new File(uploadPageHtmlLocation);
 		if (idxFile.exists()) {
 			if (!idxFile.canWrite()) {
 				System.err.println("can not read uploadPage! Shut Down ...");
 				return;
 			}
 		} else {
-			System.err.println("can not find " + uploadPageHtml + "! Shut Down ...");
+			System.err.println("can not find " + uploadPageHtmlLocation + "! Shut Down ...");
 			return;
 		}
 		try {
@@ -53,7 +58,7 @@ public class UploadServlet extends HttpServlet {
 			e1.printStackTrace();
 			return;
 		}        
-        
+        System.out.println("running");
     }
 
 	/**
@@ -86,14 +91,60 @@ public class UploadServlet extends HttpServlet {
 	        fileName = filePart.getSubmittedFileName();
 	        System.out.println(filePart.getContentType() + " - " + filePart.getName());
 	        System.out.println(fileName);
-	        //InputStream fileContent = filePart.getInputStream();
-	        // ... (do your job here)
+	        InputStream fileContent = filePart.getInputStream();
+	        writeToFileSystem(fileName, fileContent);
 	    }
 	    
 	    response.getWriter().append(fileName + " Fertisch");
 	}
 
+	private static void writeToFileSystem(String fname, InputStream in){
+		OutputStream out = getOutputStream(fname);
+		if(out == null || in == null){
+			return;
+		}
+		
+		byte[] buffer = new byte[32768];        
+        int len;
+        try {
+			while( (len = in.read(buffer)) > 0 ){
+				out.write(buffer, 0, len);
+			}
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
+	private static FileOutputStream getOutputStream(String fname) {
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(getFile(dataFolder + fname), false);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return fos;
+	}
+	
+	private static File getFile(String fname) {
+		File file = new File(fname);
+		if (file.exists()) {
+			int endIndex = fname.lastIndexOf(".");
+			String fnameEnd = ".file";
+			if (endIndex != -1) {
+				fnameEnd = fname.substring(endIndex, fname.length());
+				fname = fname.substring(0, endIndex);
+			}
+			int i = 0;
+			while (file.exists()) {
+				// fname.substring(0, endIndex);
+				file = new File(fname + Integer.toString(i++) + fnameEnd);
+			}
+		}
+		return file;
+	}	
 	
 	
 }
