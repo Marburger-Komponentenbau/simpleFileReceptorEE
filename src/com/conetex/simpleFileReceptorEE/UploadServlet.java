@@ -22,7 +22,7 @@ import javax.servlet.http.Part;
  */
 @WebServlet("/UploadServlet")
 @MultipartConfig
-public class UploadServlet extends HttpServlet {   
+public class UploadServlet extends HttpServlet {    
 	
 	private static final long serialVersionUID = 1L;
 
