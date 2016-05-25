@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+
 /**
  * Servlet implementation class UploadServlet   
  */
@@ -26,9 +27,11 @@ public class UploadServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 
-	private static final String dataFolder = "C://_//02 Eclipse JEE Workspace//_GitHub//simpleFileReceptorEE//data//";
-       
-	private static final String uploadPageHtmlLocation = "C://_//02 Eclipse JEE Workspace//_GitHub//simpleFileReceptorEE//the simpleFileReceptor dropzone.htm";
+	//private static final String dataFolder = "C://_//02 Eclipse JEE Workspace//_GitHub//simpleFileReceptorEE//data//";
+	private static final String dataFolder = "C://dev//Projekte//EclipseEE_WS//data//";
+    
+	//private static final String uploadPageHtmlLocation = "C://_//02 Eclipse JEE Workspace//_GitHub//simpleFileReceptorEE//the simpleFileReceptor dropzone.htm";
+	private static final String uploadPageHtmlLocation = "C://dev//Projekte//EclipseEE_WS//simpleFileReceptorEE//the simpleFileReceptor dropzone.htm";
 	
 	private static String uploadPageHtml = "";
 	
