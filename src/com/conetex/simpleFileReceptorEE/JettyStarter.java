@@ -19,9 +19,15 @@ import org.eclipse.jetty.webapp.WebXmlConfiguration;
 
 public class JettyStarter {
 
-	public static void main1(String[] args) {
+	public static void main(String[] args) {
+		//main8080(args);
+		main8081(args);
+		//main8082(args);
+	}
+	
+	public static void main8080(String[] args) {
 		
-        Server server = new Server(8081);
+        Server server = new Server(8080);
         
         ServletHandler handler = new ServletHandler();
         handler.addServletWithMapping(UploadServlet.class, "/*");        
@@ -42,7 +48,7 @@ public class JettyStarter {
 
 	}
 	
-	public static void main(String[] args) {
+	public static void main8081(String[] args) {
 		
         Server server = new Server(8081);
         /*
@@ -73,15 +79,16 @@ public class JettyStarter {
 
 	}
 
-	public static void main2(String[] args) throws Exception {
-		int port = 8080;
+	public static void main8082(String[] args) {
+		int port = 8082;
 		Server server = new Server(port);
 		
-		String wardir = "target/sample-webapp-1-SNAPSHOT";
+        ServletHandler handler = new ServletHandler();
+        handler.addServletWithMapping(UploadServlet.class, "/*"); 		
 		
 		WebAppContext context = new WebAppContext();
-		context.setResourceBase(wardir);
-		context.setDescriptor(wardir + "WEB-INF/web.xml");
+		context.setServletHandler(handler);
+
 		context.setConfigurations(new Configuration[] {
 				new AnnotationConfiguration(), new WebXmlConfiguration(),
 				new WebInfConfiguration(), //new TagLibConfiguration(),
@@ -91,9 +98,18 @@ public class JettyStarter {
 		context.setContextPath("/");
 		context.setParentLoaderPriority(true);
 		server.setHandler(context);
-		server.start();
-		server.dump(System.err);
-		server.join();
+		
+		
+		
+		try {
+			server.start();
+			server.dump(System.err);
+			server.join();			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }
