@@ -32,13 +32,34 @@ import org.eclipse.jetty.webapp.WebXmlConfiguration;
 public class JettyStarter {
 
 	public static void main(String[] args) {
-		//main8080(args);
-		try {
-			main8083JSP(args);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		final String[] aArgs = args;
+		Thread a = new Thread(
+				new Runnable(){
+					@Override
+					public void run() {
+						//main8080(aArgs);// kein Multipart
+						main8081(aArgs);	// funzt					
+					}}
+				);
+		a.start();
+		
+		final String[] bArgs = args;
+		Thread b = new Thread(
+					new Runnable(){
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							try {
+								main8083JSP(bArgs);
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}							
+						}
+					}
+				);
+		b.start();
+
 		//main8082(args);
 	}
 	
@@ -157,7 +178,9 @@ public class JettyStarter {
         WebAppContext webapp = new WebAppContext();
         webapp.setContextPath( "/" );
         File warFile = new File(
-                "C:/_Programs_Regfree/jetty-distribution-9.3.8.v20160314/webapps/simpleFileReceptorEE2.war" );
+//                "C:/_Programs_Regfree/jetty-distribution-9.3.8.v20160314/webapps/simpleFileReceptorEE2.war"
+        		"C:/dev/Projekte/EclipseEE_WS/simpleFileReceptorEE/simpleFileReceptorEE.war"
+        		);
         if (!warFile.exists())
         {
             throw new RuntimeException( "Unable to find WAR File: "

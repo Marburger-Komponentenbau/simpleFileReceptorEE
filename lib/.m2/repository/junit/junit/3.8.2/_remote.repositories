@@ -1,4 +1,6 @@
 #NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
-#Sun May 29 22:42:32 CEST 2016
+#Wed Jun 01 10:35:45 CEST 2016
 junit-3.8.2.pom>central=
+junit-3.8.2.pom>cobaJavaBuild=
+junit-3.8.2.jar>cobaJavaBuild=
 junit-3.8.2.jar>central=

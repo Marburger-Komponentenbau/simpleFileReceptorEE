@@ -1,0 +1,5 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Wed Jun 01 10:34:02 CEST 2016
+http\://javabuild.intranet.commerzbank.com/nexus/content/groups/public/.lastUpdated=1464770042252
+@default-central-https\://repo.maven.apache.org/maven2/.lastUpdated=1464767913724
+https\://repo.maven.apache.org/maven2/.error=Could not transfer artifact org.eclipse.jetty\:jetty-annotations\:pom\:9.3.8.v20160314 from/to central (https\://repo.maven.apache.org/maven2)\: repo.maven.apache.org

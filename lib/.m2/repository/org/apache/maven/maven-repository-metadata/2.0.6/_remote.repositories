@@ -1,4 +1,6 @@
 #NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
-#Sun May 29 22:42:36 CEST 2016
+#Wed Jun 01 10:34:40 CEST 2016
 maven-repository-metadata-2.0.6.pom>central=
+maven-repository-metadata-2.0.6.pom>cobaJavaBuild=
+maven-repository-metadata-2.0.6.jar>cobaJavaBuild=
 maven-repository-metadata-2.0.6.jar>central=
