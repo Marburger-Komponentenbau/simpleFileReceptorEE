@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project simpleFileReceptorEE with Jar-in-Jar Loader">
+    <!--this file was created by Eclipse Runnable JAR file Export Wizard-->
+    <!--ANT 1.7 is required-->
+    <!--define folder properties-->
+    <property name="dir.buildfile" value="."/>
+    <property name="dir.workspace" value="${dir.buildfile}/.."/>
+    <property name="dir.jarfile" value="${dir.buildfile}"/>
+    <target name="create_run_jar">
+        <jar destfile="${dir.jarfile}/jetstart.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+                <attribute name="Rsrc-Main-Class" value="com.conetex.simpleFileReceptorEE.JettyStarter"/>
+                <attribute name="Class-Path" value="."/>
+                <attribute name="Rsrc-Class-Path" value="./ jetty-all-9.3.8.v20160314-uber.jar jetty-server-9.3.8.v20160314.jar jetty-http-9.3.8.v20160314.jar jetty-io-9.3.8.v20160314.jar jetty-servlet-9.3.8.v20160314.jar jetty-security-9.3.8.v20160314.jar jetty-webapp-9.3.8.v20160314.jar jetty-xml-9.3.8.v20160314.jar javax.servlet-api-3.1.0.jar jetty-annotations-9.3.8.v20160314.jar jetty-plus-9.3.8.v20160314.jar jetty-jndi-9.3.8.v20160314.jar javax.annotation-api-1.2.jar asm-5.0.1.jar asm-commons-5.0.1.jar asm-tree-5.0.1.jar apache-jsp-9.3.8.v20160314.jar jetty-util-9.3.8.v20160314.jar jetty-schemas-3.1.jar apache-jsp-8.0.27.jar apache-el-8.0.27.jar ecj-4.4.2.jar apache-jstl-9.3.8.v20160314.jar taglibs-standard-spec-1.2.5.jar taglibs-standard-impl-1.2.5.jar"/>
+            </manifest>
+            <zipfileset src="jar-in-jar-loader.zip"/>
+            <fileset dir="${dir.jarfile}/target/classes"/>
+            <zipfileset dir="${dir.jarfile}/lib" includes="jetty-all-9.3.8.v20160314-uber.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jetty/jetty-server/9.3.8.v20160314" includes="jetty-server-9.3.8.v20160314.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jetty/jetty-http/9.3.8.v20160314" includes="jetty-http-9.3.8.v20160314.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jetty/jetty-io/9.3.8.v20160314" includes="jetty-io-9.3.8.v20160314.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jetty/jetty-servlet/9.3.8.v20160314" includes="jetty-servlet-9.3.8.v20160314.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jetty/jetty-security/9.3.8.v20160314" includes="jetty-security-9.3.8.v20160314.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jetty/jetty-webapp/9.3.8.v20160314" includes="jetty-webapp-9.3.8.v20160314.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jetty/jetty-xml/9.3.8.v20160314" includes="jetty-xml-9.3.8.v20160314.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/javax/servlet/javax.servlet-api/3.1.0" includes="javax.servlet-api-3.1.0.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jetty/jetty-annotations/9.3.8.v20160314" includes="jetty-annotations-9.3.8.v20160314.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jetty/jetty-plus/9.3.8.v20160314" includes="jetty-plus-9.3.8.v20160314.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jetty/jetty-jndi/9.3.8.v20160314" includes="jetty-jndi-9.3.8.v20160314.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/javax/annotation/javax.annotation-api/1.2" includes="javax.annotation-api-1.2.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/ow2/asm/asm/5.0.1" includes="asm-5.0.1.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/ow2/asm/asm-commons/5.0.1" includes="asm-commons-5.0.1.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/ow2/asm/asm-tree/5.0.1" includes="asm-tree-5.0.1.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jetty/apache-jsp/9.3.8.v20160314" includes="apache-jsp-9.3.8.v20160314.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jetty/jetty-util/9.3.8.v20160314" includes="jetty-util-9.3.8.v20160314.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jetty/toolchain/jetty-schemas/3.1" includes="jetty-schemas-3.1.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/mortbay/jasper/apache-jsp/8.0.27" includes="apache-jsp-8.0.27.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/mortbay/jasper/apache-el/8.0.27" includes="apache-el-8.0.27.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jdt/core/compiler/ecj/4.4.2" includes="ecj-4.4.2.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/eclipse/jetty/apache-jstl/9.3.8.v20160314" includes="apache-jstl-9.3.8.v20160314.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/apache/taglibs/taglibs-standard-spec/1.2.5" includes="taglibs-standard-spec-1.2.5.jar"/>
+            <zipfileset dir="${dir.jarfile}/lib/.m2/repository/org/apache/taglibs/taglibs-standard-impl/1.2.5" includes="taglibs-standard-impl-1.2.5.jar"/>
+        </jar>
+    	
+    	<war destfile="${dir.jarfile}/simpleFileReceptorEE.war" webxml="${dir.jarfile}/WebContent/web.xml">
+    	  <fileset dir="${dir.jarfile}/WebContent"/>
+    	</war>    	
+    	
+    </target>
+</project>

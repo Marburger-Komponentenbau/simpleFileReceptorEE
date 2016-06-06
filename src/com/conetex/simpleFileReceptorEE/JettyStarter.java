@@ -1,7 +1,21 @@
 package com.conetex.simpleFileReceptorEE;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.management.ManagementFactory;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.server.Server;
@@ -26,146 +40,106 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.eclipse.jetty.webapp.WebXmlConfiguration;
 
-
+import java.util.logging.Formatter;
 
 
 public class JettyStarter {
 
+	private static final int port = 8081;
+	
+	//private static final String logFolder = "logs\\";
+	private static final String logFolder = "E://Apps//RechenkernMain//fileReceptorEE//logs//";
+	
+	private static final Logger log = Logger.getLogger(UploadServlet.class.getName());
+	
+	private static final String LINE_SEPARATOR = System.getProperty("line.separator");	
+	
+	private static final String logEntryDateFormat = "yyyy.MM.dd HH.mm.ss";
+	
+	private static Server server;
+	
+	public static void shutdown() {
+		System.exit(0);
+	}	
+	
+	public static void shutdownNow() {
+		System.exit(0);
+	}
+	
 	public static void main(String[] args) {
-		final String[] aArgs = args;
 		Thread a = new Thread(
 				new Runnable(){
 					@Override
 					public void run() {
-						//main8080(aArgs);// kein Multipart
-						main8081(aArgs);	// funzt					
+						start();
+					}}
+				);
+		a.start();		
+	}
+	
+	public static void start() {
+		
+		File logFolderFile = new File(logFolder);
+		if (logFolderFile.exists()) {
+			if (!logFolderFile.canWrite()) {
+				System.err.println("can not write in log folder! Shut Down ...");
+				return;
+			}
+		} else {
+			if (!logFolderFile.mkdir()) {
+				System.err.println("can not create log folder! Shut Down ...");
+				return;
+			}
+			if (!logFolderFile.canWrite()) {
+				System.err.println("can not write in log folder! Shut Down ...");
+				return;
+			}
+		}
+		Handler handler = null;
+		try {
+			handler = new FileHandler(logFolder + "%g.log", 5242880, 30, true);
+		} catch (SecurityException e2) {
+			System.err.println(e2.getMessage());
+			e2.printStackTrace();
+			return;
+		} catch (IOException e2) {
+			System.err.println(e2.getMessage());
+			e2.printStackTrace();
+			return;
+		}
+		handler.setFormatter(new LogFormatter());
+		log.addHandler(handler);
+
+		System.out.println("L O G G I N G   I N I T I A L I Z E D");	
+
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+        
+		/*
+		Thread a = new Thread(
+				new Runnable(){
+					@Override
+					public void run() {
+				        
 					}}
 				);
 		a.start();
-		
-		final String[] bArgs = args;
-		Thread b = new Thread(
-					new Runnable(){
-						@Override
-						public void run() {
-							// TODO Auto-generated method stub
-							try {
-								main8083JSP(bArgs);
-							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}							
-						}
-					}
-				);
-		b.start();
-
-		//main8082(args);
-	}
-	
-	public static void main8080(String[] args) {
-		
-        Server server = new Server(8080);
-        server.setAttribute("org.eclipse.jetty.server.Request.maxFormContentSize", 2000000);
-        
-        ServletHandler handler = new ServletHandler();
-        handler.addServletWithMapping(UploadServlet.class, "/*");        
-       
-        server.setHandler(handler);
-        
-        try {
-			server.start();
-			server.dumpStdErr();
-			server.join();
-        } catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-	
-	public static void main8081(String[] args) {
-		
-        Server server = new Server(8081);
-        /*
-        ServletHandler handler = new ServletHandler();
-        handler.addServletWithMapping(UploadServlet.class, "/*");        
-        ServletContext context = handler..getServletContext();
 		*/
-        
-        ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        handler.setContextPath("/");
-        ServletHolder fileUploadServletHolder = new ServletHolder(new UploadServlet());
-        fileUploadServletHolder.getRegistration().setMultipartConfig(new MultipartConfigElement("data/tmp"));
-        handler.addServlet(fileUploadServletHolder, "/*");
-        
-        server.setHandler(handler);
-        
-        try {
-			server.start();
-			server.dumpStdErr();
-			server.join();
-        } catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-	}
-
-	public static void main8082(String[] args) {
-		int port = 8082;
-		Server server = new Server(port);
-		
-        ServletHandler handler = new ServletHandler();
-        handler.addServletWithMapping(UploadServlet.class, "/*"); 		
-		
-		WebAppContext context = new WebAppContext();
-		context.setServletHandler(handler);
-
-		context.setConfigurations(new Configuration[] {
-				new AnnotationConfiguration(), new WebXmlConfiguration(),
-				new WebInfConfiguration(), //new TagLibConfiguration(),
-				new PlusConfiguration(), new MetaInfConfiguration(),
-				new FragmentConfiguration(), new EnvConfiguration() });
-
-		context.setContextPath("/");
-		context.setParentLoaderPriority(true);
-		server.setHandler(context);
-		
-		
-		
-		try {
-			server.start();
-			server.dump(System.err);
-			server.join();			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	
-    public static void main8083JSP( String[] args ) throws Exception
-    {
         // Create a basic jetty server object that will listen on port 8080.
         // Note that if you set this to port 0 then
         // a randomly available port will be assigned that you can either look
         // in the logs for the port,
         // or programmatically obtain it for use in test cases.
-        Server server = new Server( 8083 );
+        server = new Server(port);
+                
+        //ServletContextHandler handler1 = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        //handler1.setContextPath("/upload");
+        ServletHolder fileUploadServletHolder = new ServletHolder(new UploadServlet());
+        fileUploadServletHolder.getRegistration().setMultipartConfig(new MultipartConfigElement("data/tmp"));
+        //handler1.addServlet(fileUploadServletHolder, "/*");
+        //server.setHandler(handler1);
 
-        // Setup JMX
-        //MBeanServer mbContainer = new MBeanServer(
-          //      ManagementFactory.getPlatformMBeanServer() );
-        //server.addBean( mbContainer );
-
+        
         // The WebAppContext is the entity that controls the environment in
         // which a web application lives and
         // breathes. In this example the context path is being set to "/" so it
@@ -176,23 +150,27 @@ public class JettyStarter {
         // the webapp (through
         // PlusConfiguration) to choosing where the webapp will unpack itself.
         WebAppContext webapp = new WebAppContext();
+        
+        webapp.addServlet(fileUploadServletHolder, "/data/*");
+        
+        
         webapp.setContextPath( "/" );
         File warFile = new File(
-//                "C:/_Programs_Regfree/jetty-distribution-9.3.8.v20160314/webapps/simpleFileReceptorEE2.war"
-        		"C:/dev/Projekte/EclipseEE_WS/simpleFileReceptorEE/simpleFileReceptorEE.war"
+//              "C:/_Programs_Regfree/jetty-distribution-9.3.8.v20160314/webapps/simpleFileReceptorEE2.war"
+//        		"C:/dev/Projekte/EclipseEE_WS/simpleFileReceptorEE/simpleFileReceptorEE.war"
+//        		"simpleFileReceptorEE.war"
+        		"E:/Apps/RechenkernMain/fileReceptorEE/simpleFileReceptorEE.war"        		
         		);
         if (!warFile.exists())
         {
-            throw new RuntimeException( "Unable to find WAR File: "
-                    + warFile.getAbsolutePath() );
+            throw new RuntimeException( "Unable to find WAR File: " + warFile.getAbsolutePath() );
         }
         webapp.setWar( warFile.getAbsolutePath() );
 
         // This webapp will use jsps and jstl. We need to enable the
         // AnnotationConfiguration in order to correctly
         // set up the jsp container
-        Configuration.ClassList classlist = Configuration.ClassList
-                .setServerDefault( server );
+        Configuration.ClassList classlist = Configuration.ClassList.setServerDefault( server );
         classlist.addBefore(
                 "org.eclipse.jetty.webapp.JettyWebXmlConfiguration",
                 "org.eclipse.jetty.annotations.AnnotationConfiguration" );
@@ -210,28 +188,58 @@ public class JettyStarter {
         // send the appropriate requests.
         server.setHandler( webapp );
 
-        // Configure a LoginService.
-        // Since this example is for our test webapp, we need to setup a
-        // LoginService so this shows how to create a very simple hashmap based
-        // one. The name of the LoginService needs to correspond to what is
-        // configured in the webapp's web.xml and since it has a lifecycle of
-        // its own we register it as a bean with the Jetty server object so it
-        // can be started and stopped according to the lifecycle of the server
-        // itself.
-        /*
-        HashLoginService loginService = new HashLoginService();
-        loginService.setName( "Test Realm" );
-        loginService.setConfig( "src/test/resources/realm.properties" );
-        server.addBean( loginService );
-        */
+        try {
+        	// Start things up!
+			server.start();
+			server.dumpStdErr();
+	        // The use of server.join() the will make the current thread join and
+	        // wait until the server is done executing.
+	        // See http://docs.oracle.com/javase/7/docs/api/java/lang/Thread.html#join()							
+			server.join();
+        } catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}							
+		
+	}
+	
+	
+	
+	public static final class LogFormatter extends Formatter {
 
-        // Start things up!
-        server.start();
+		private DateFormat logEntryDateFormatter = new SimpleDateFormat(
+				logEntryDateFormat);
 
-        // The use of server.join() the will make the current thread join and
-        // wait until the server is done executing.
-        // See http://docs.oracle.com/javase/7/docs/api/java/lang/Thread.html#join()
-        server.join();
-    }	
+		@Override
+		public String format(LogRecord record) {
+			StringBuilder sb = new StringBuilder();
+
+			sb.append(
+					this.logEntryDateFormatter.format(new Date(record
+							.getMillis()))).append(" ")
+					.append(Thread.currentThread().getId()).append(" ")
+					.append(record.getLevel().getName())
+					// .getLocalizedName())
+					.append(": ").append(formatMessage(record))
+					.append(LINE_SEPARATOR);
+
+			if (record.getThrown() != null) {
+				try {
+					StringWriter sw = new StringWriter();
+					PrintWriter pw = new PrintWriter(sw);
+					record.getThrown().printStackTrace(pw);
+					pw.close();
+					sb.append(sw.toString());
+				} catch (Exception ex) {
+					// ignore
+				}
+			}
+
+			return sb.toString();
+		}
+	}	
 	
 }

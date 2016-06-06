@@ -28,10 +28,13 @@ public class UploadServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	//private static final String dataFolder = "C://_//02 Eclipse JEE Workspace//_GitHub//simpleFileReceptorEE//data//";
-	private static final String dataFolder = "C://dev//Projekte//EclipseEE_WS//data//";
-    
+	//private static final String dataFolder = "C://dev//Projekte//EclipseEE_WS//data//";
+	//private static final String dataFolder = "data//";
+	private static final String dataFolder = "E://Apps//RechenkernMain//fileReceptorEE//data//";
+
 	//private static final String uploadPageHtmlLocation = "C://_//02 Eclipse JEE Workspace//_GitHub//simpleFileReceptorEE//the simpleFileReceptor dropzone.htm";
-	private static final String uploadPageHtmlLocation = "C://dev//Projekte//EclipseEE_WS//simpleFileReceptorEE//the simpleFileReceptor dropzone.htm";
+	//private static final String uploadPageHtmlLocation = "C://dev//Projekte//EclipseEE_WS//simpleFileReceptorEE//the simpleFileReceptor dropzone.htm";
+	private static final String uploadPageHtmlLocation = "the simpleFileReceptor dropzone.htm";
 	
 	private static String uploadPageHtml = "";
 	
@@ -143,7 +146,7 @@ public class UploadServlet extends HttpServlet {
 			int i = 0;
 			while (file.exists()) {
 				// fname.substring(0, endIndex);
-				file = new File(fname + Integer.toString(i++) + fnameEnd);
+				file = new File(fname + "." + Integer.toString(i++) + fnameEnd);
 			}
 		}
 		return file;
