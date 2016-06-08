@@ -45,14 +45,14 @@ import java.util.logging.Formatter;
 
 public class JettyStarter {
 
-	private static final int port = 8081;
+	private static final int port = 8097;
 	
 	//private static final String logFolder = "logs\\";
 	private static final String logFolder = "E://Apps//RechenkernMain//fileReceptorEE//logs//";
 	
 	private static final Logger log = Logger.getLogger(UploadServlet.class.getName());
 	
-	private static final String LINE_SEPARATOR = System.getProperty("line.separator");	
+	private static final String LINE_SEPARATOR = System.getProperty("/r/n");	
 	
 	private static final String logEntryDateFormat = "yyyy.MM.dd HH.mm.ss";
 	
@@ -67,6 +67,7 @@ public class JettyStarter {
 	}
 	
 	public static void main(String[] args) {
+		/*
 		Thread a = new Thread(
 				new Runnable(){
 					@Override
@@ -74,11 +75,14 @@ public class JettyStarter {
 						start();
 					}}
 				);
-		a.start();		
+		a.start();	
+		*/
+		System.out.println("Hi welt");	
+		start();
 	}
 	
 	public static void start() {
-		
+/*
 		File logFolderFile = new File(logFolder);
 		if (logFolderFile.exists()) {
 			if (!logFolderFile.canWrite()) {
@@ -111,8 +115,8 @@ public class JettyStarter {
 		log.addHandler(handler);
 
 		System.out.println("L O G G I N G   I N I T I A L I Z E D");	
-
-        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+*/
+//        System.out.println("Working Directory = " + System.getProperty("user.dir"));
         
 		/*
 		Thread a = new Thread(
@@ -140,21 +144,7 @@ public class JettyStarter {
         //server.setHandler(handler1);
 
         
-        // The WebAppContext is the entity that controls the environment in
-        // which a web application lives and
-        // breathes. In this example the context path is being set to "/" so it
-        // is suitable for serving root context
-        // requests and then we see it setting the location of the war. A whole
-        // host of other configurations are
-        // available, ranging from configuring to support annotation scanning in
-        // the webapp (through
-        // PlusConfiguration) to choosing where the webapp will unpack itself.
-        WebAppContext webapp = new WebAppContext();
-        
-        webapp.addServlet(fileUploadServletHolder, "/data/*");
-        
-        
-        webapp.setContextPath( "/" );
+
         File warFile = new File(
 //              "C:/_Programs_Regfree/jetty-distribution-9.3.8.v20160314/webapps/simpleFileReceptorEE2.war"
 //        		"C:/dev/Projekte/EclipseEE_WS/simpleFileReceptorEE/simpleFileReceptorEE.war"
@@ -163,44 +153,76 @@ public class JettyStarter {
         		);
         if (!warFile.exists())
         {
-            throw new RuntimeException( "Unable to find WAR File: " + warFile.getAbsolutePath() );
+        	System.out.println("Error 0");	
+        	
+            ServletContextHandler handler1 = new ServletContextHandler(ServletContextHandler.SESSIONS);
+            handler1.setContextPath("/upload");
+            handler1.addServlet(fileUploadServletHolder, "/*");
+            server.setHandler(handler1);        	
+        	
+//            throw new RuntimeException( "Unable to find WAR File: " + warFile.getAbsolutePath() );
         }
-        webapp.setWar( warFile.getAbsolutePath() );
+        else{
+        	
+            // The WebAppContext is the entity that controls the environment in
+            // which a web application lives and
+            // breathes. In this example the context path is being set to "/" so it
+            // is suitable for serving root context
+            // requests and then we see it setting the location of the war. A whole
+            // host of other configurations are
+            // available, ranging from configuring to support annotation scanning in
+            // the webapp (through
+            // PlusConfiguration) to choosing where the webapp will unpack itself.
+            WebAppContext webapp = new WebAppContext();
+            
+            webapp.addServlet(fileUploadServletHolder, "/data/*");
+            
+            
+            webapp.setContextPath( "/" );        	
+        	
+        	webapp.setWar( warFile.getAbsolutePath() );
+        	
+            // This webapp will use jsps and jstl. We need to enable the
+            // AnnotationConfiguration in order to correctly
+            // set up the jsp container
+            Configuration.ClassList classlist = Configuration.ClassList.setServerDefault( server );
+                    classlist.addBefore(
+                            "org.eclipse.jetty.webapp.JettyWebXmlConfiguration",
+                            "org.eclipse.jetty.annotations.AnnotationConfiguration" );
 
-        // This webapp will use jsps and jstl. We need to enable the
-        // AnnotationConfiguration in order to correctly
-        // set up the jsp container
-        Configuration.ClassList classlist = Configuration.ClassList.setServerDefault( server );
-        classlist.addBefore(
-                "org.eclipse.jetty.webapp.JettyWebXmlConfiguration",
-                "org.eclipse.jetty.annotations.AnnotationConfiguration" );
+            // Set the ContainerIncludeJarPattern so that jetty examines these
+            // container-path jars for tlds, web-fragments etc.
+            // If you omit the jar that contains the jstl .tlds, the jsp engine will
+            // scan for them instead.
+            webapp.setAttribute(
+                            "org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
+                            ".*/[^/]*servlet-api-[^/]*\\.jar$|.*/javax.servlet.jsp.jstl-.*\\.jar$|.*/[^/]*taglibs.*\\.jar$" );        	
 
-        // Set the ContainerIncludeJarPattern so that jetty examines these
-        // container-path jars for tlds, web-fragments etc.
-        // If you omit the jar that contains the jstl .tlds, the jsp engine will
-        // scan for them instead.
-        webapp.setAttribute(
-                "org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
-                ".*/[^/]*servlet-api-[^/]*\\.jar$|.*/javax.servlet.jsp.jstl-.*\\.jar$|.*/[^/]*taglibs.*\\.jar$" );
+            // A WebAppContext is a ContextHandler as well so it needs to be set to
+            // the server so it is aware of where to
+            // send the appropriate requests.
+            server.setHandler( webapp );            
+	    }
 
-        // A WebAppContext is a ContextHandler as well so it needs to be set to
-        // the server so it is aware of where to
-        // send the appropriate requests.
-        server.setHandler( webapp );
+
+
+
 
         try {
         	// Start things up!
 			server.start();
-			server.dumpStdErr();
+//			server.dumpStdErr();
 	        // The use of server.join() the will make the current thread join and
 	        // wait until the server is done executing.
 	        // See http://docs.oracle.com/javase/7/docs/api/java/lang/Thread.html#join()							
 			server.join();
         } catch (InterruptedException e) {
 			// TODO Auto-generated catch block
+        	System.out.println("Error 1");	
 			e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+        	System.out.println("Error 2");	
 			e.printStackTrace();
 		}							
 		
