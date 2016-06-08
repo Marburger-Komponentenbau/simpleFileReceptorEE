@@ -1389,6 +1389,8 @@ else{
         this.emit("successmultiple", files, responseText, e);
         this.emit("completemultiple", files);
       }
+	  Dropzone.uploadedFileNames = Dropzone.uploadedFileNames + responseText;
+	  alert(Dropzone.uploadedFileNames);
       if (this.options.autoProcessQueue) {
         return this.processQueue();
       }
@@ -1415,6 +1417,8 @@ else{
 
   })(Emitter);
 
+  Dropzone.uploadedFileNames = "";
+  
   Dropzone.version = "4.3.0";
 
   Dropzone.options = {};
@@ -2195,8 +2199,19 @@ body {
 <!-- Change /upload-target to your upload address -->
 <form class="dropzone" action=/<% out.print(contextPath);%>/upload></form>
 
-<!-- <p>
-<% out.println(contextPath); %>
-</p>  -->
+<!--
+<p>
+<% 
+HttpSession s = request.getSession();
+if(s == null){
+	out.println( s.getId() );
+}
+else{
+	//s = request.getSession(true);
+	//out.println( "|> " + s.getId() );
+}
+%>
+</p> 
+-->
 
 </body>

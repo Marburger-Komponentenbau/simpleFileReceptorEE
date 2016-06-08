@@ -32,13 +32,24 @@ public class UploadServlet extends HttpServlet {
 	//private static final String dataFolder = "C://_//02 Eclipse JEE Workspace//_GitHub//simpleFileReceptorEE//data//";
 	//private static final String dataFolder = "C://dev//Projekte//EclipseEE_WS//data//";
 	//private static final String dataFolder = "data//";
-	private static final String dataFolder = "E://Apps//RechenkernMain//fileReceptorEE//data//";
+	private static String dataFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
+	
+	private static File dataFolder = null; 
 	
     /**
      * @see HttpServlet#HttpServlet()
      */
     public UploadServlet() {
         super();
+        
+        dataFolder = new File(dataFolderName);
+        if ( !dataFolder.exists() && !dataFolder.mkdir() ) {
+        	dataFolderName = "data//";
+        	dataFolder = new File(dataFolderName);
+        	if (! dataFolder.exists()){
+        		dataFolder.mkdir();
+        	}
+        }        
         System.out.println("running");
     }
 
@@ -56,11 +67,10 @@ public class UploadServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    
         ServletContext c = this.getServletContext();
-        String folderName = dataFolder + c.getContextPath();
-        File folder = new File(folderName);
+        File folder = new File(dataFolder, c.getContextPath());
         if (! folder.exists()) {
         	if (! folder.mkdir()){
-        		folder = new File(dataFolder);
+        		folder = new File("default");
         	}
         }
         
@@ -75,21 +85,25 @@ public class UploadServlet extends HttpServlet {
 		Collection<Part> fileParts = request.getParts();//.stream().filter(part -> "file".equals(part.getName())).collect(Collectors.toList()); // Retrieves <input type="file" name="file" multiple="true">
 	    // image/jpeg - file[0]
 		String fileName = "?";
+		File outFile = null;
 	    for (Part filePart : fileParts) {
 	        fileName = filePart.getSubmittedFileName();
 	        System.out.println(filePart.getContentType() + " - " + filePart.getName());
 	        System.out.println(fileName);
 	        InputStream fileContent = filePart.getInputStream();
-	        writeToFileSystem(folder, fileName, fileContent);
+	        outFile = writeToFileSystem(folder, fileName, fileContent);
+	        if(outFile != null){
+	    	    response.getWriter().append(outFile.getName()+"|");	        	
+	        }
 	    }
 	    
-	    response.getWriter().append(fileName + " Fertisch");
 	}
 
-	private static void writeToFileSystem(File folder, String fname, InputStream in){
-		OutputStream out = getOutputStream(folder, fname);
+	private static File writeToFileSystem(File folder, String fname, InputStream in){
+		File outFile = getFile(folder, fname);
+		OutputStream out = getOutputStream(outFile);
 		if(out == null || in == null){
-			return;
+			return null;
 		}
 		
 		byte[] buffer = new byte[32768];        
@@ -100,16 +114,18 @@ public class UploadServlet extends HttpServlet {
 			}
 			out.flush();
 			out.close();
+			return outFile;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
 	}
 	
-	private static FileOutputStream getOutputStream(File folder, String fname) {
+	private static FileOutputStream getOutputStream(File file) {
 		FileOutputStream fos = null;
 		try {
-			fos = new FileOutputStream(getFile(folder, fname), false);
+			fos = new FileOutputStream(file, false);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
