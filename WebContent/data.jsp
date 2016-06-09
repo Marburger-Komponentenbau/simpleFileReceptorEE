@@ -16,6 +16,13 @@ else{
 <title>TU-D  -  Test Data Transfer  -  01-15-42 | Risk Calculation Kernels</title>
 
 <script type="text/javascript">
+function submitZipSendScanForm()
+{
+	var current = document.getElementById("uploadedFiles");
+	current.value = Dropzone.uploadedFileNames;
+	document.ZipSendScanForm.submit();
+}
+
 (function() {
   var Dropzone, Emitter, camelize, contentLoaded, detectVerticalSquash, drawImageIOSFix, noop, without,
     __slice = [].slice,
@@ -1390,7 +1397,7 @@ else{
         this.emit("completemultiple", files);
       }
 	  Dropzone.uploadedFileNames = Dropzone.uploadedFileNames + responseText;
-	  alert(Dropzone.uploadedFileNames);
+	  //alert(Dropzone.uploadedFileNames);
       if (this.options.autoProcessQueue) {
         return this.processQueue();
       }
@@ -1769,8 +1776,22 @@ else{
 
 body {
     color: black;
-    font-family: Segoe UI, Tahoma,Verdana, Helvetica, Arial, sans-serif;
-    
+    font-family: Segoe UI, Tahoma,Verdana, Helvetica, Arial, sans-serif; 
+}
+.linkButton:link, .linkButton:visited {
+    background-color: #FFCF31;
+    color: black;
+    padding: 6px 12px;
+    text-align: center; 
+    text-decoration: none;
+    display: inline-block;
+    border: 2px solid black; 
+    font-weight: bold;
+}
+
+.linkButton:hover, .linkButton:active {
+    background-color: black;
+    color: #FFCF31;
 }
 
 .kernelLogo {
@@ -2213,5 +2234,13 @@ else{
 %>
 </p> 
 -->
+
+<form name="ZipSendScanForm" class="inline" method="post" action="/<% out.print(contextPath);%>/ZipSendScan">
+  <input type="hidden" name="uploadedFiles" id="uploadedFiles" value="|">
+</form>
+
+<p style="text-align: center;">
+<a href="javascript: submitZipSendScanForm()" class="linkButton">SCAN</a>
+</p>
 
 </body>
