@@ -25,7 +25,7 @@ import javax.servlet.http.Part;
  */
 @WebServlet("/upload")
 @MultipartConfig
-public class UploadServlet extends HttpServlet {    
+public class UploadServlet extends AbstractServlet {    
 	
 	private static final long serialVersionUID = 1L;
 
@@ -41,16 +41,6 @@ public class UploadServlet extends HttpServlet {
      */
     public UploadServlet() {
         super();
-        
-        dataFolder = new File(dataFolderName);
-        if ( !dataFolder.exists() && !dataFolder.mkdir() ) {
-        	dataFolderName = "data//";
-        	dataFolder = new File(dataFolderName);
-        	if (! dataFolder.exists()){
-        		dataFolder.mkdir();
-        	}
-        }        
-        System.out.println("running");
     }
 
 	/**
@@ -66,13 +56,7 @@ public class UploadServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    
-        ServletContext c = this.getServletContext();
-        File folder = new File(dataFolder, c.getContextPath());
-        if (! folder.exists()) {
-        	if (! folder.mkdir()){
-        		folder = new File("default");
-        	}
-        }
+        File folder = super.getFolder();
         
 	    //String description = request.getParameter("description"); // Retrieves <input type="text" name="description">
 	    Part filePart1 = request.getPart("file"); // Retrieves <input type="file" name="file">
