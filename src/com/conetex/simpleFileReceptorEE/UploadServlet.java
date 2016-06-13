@@ -56,7 +56,7 @@ public class UploadServlet extends AbstractServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    
-        File folder = super.getFolder();
+        File folder = super.getFolderData();
         
 	    //String description = request.getParameter("description"); // Retrieves <input type="text" name="description">
 	    Part filePart1 = request.getPart("file"); // Retrieves <input type="file" name="file">

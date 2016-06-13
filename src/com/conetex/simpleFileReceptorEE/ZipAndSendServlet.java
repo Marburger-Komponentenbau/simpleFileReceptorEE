@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.conetex.simpleFileReceptorEE.AbstractServlet.DataFolder;
 
 /**
  * Servlet implementation class ZipAndSendServlet
@@ -29,7 +28,10 @@ import com.conetex.simpleFileReceptorEE.AbstractServlet.DataFolder;
 public class ZipAndSendServlet extends AbstractServlet {
 	private static final long serialVersionUID = 1L;
        
+	String keySeparator = "_GHNW";
+	
 	String zipFileName = "zipFileName";	
+	
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -39,9 +41,7 @@ public class ZipAndSendServlet extends AbstractServlet {
         // TODO Auto-generated constructor stub
     }
 
-	public File getZipFolder(){
-        return this.getFolder();
-	}    
+    
     
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -50,9 +50,9 @@ public class ZipAndSendServlet extends AbstractServlet {
 		// TODO Auto-generated method stub
 		String files = request.getParameter("uploadedFiles");
 		
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-		response.getWriter().append(" - files: ").append(files);
-		response.getWriter().append("<br>");
+		//response.getWriter().append("Served at: ").append(request.getContextPath());
+		//response.getWriter().append(" - files: ").append(files);
+		//response.getWriter().append("<br>");
 		
 		StringTokenizer st = new StringTokenizer( files, "|" );		
 		
@@ -60,12 +60,12 @@ public class ZipAndSendServlet extends AbstractServlet {
 		Map<String,Vector<File>> zipFiles2TiffFiles = new HashMap<String, Vector<File>> ();
 		while ( st.hasMoreTokens() ){
 			String filename = st.nextToken();
-			File tiffFile = new File(super.getFolder(), filename);
+			File tiffFile = new File(super.getFolderData(), filename);
 			if(! tiffFile.exists() || ! tiffFile.canRead() ){
 				continue;
 			}
 			// tiffFile vorhanden...
-		    int idx = filename.indexOf( "_GHNW" );
+		    int idx = filename.indexOf( keySeparator );
 			if( idx != -1 )
 			{
 				String key = filename.substring( 0, idx );
@@ -89,7 +89,8 @@ public class ZipAndSendServlet extends AbstractServlet {
 		while( keys.hasNext() )
 		{
 			String key = keys.next();			
-			File zipFile = new File( this.getZipFolder(), zipFileName +"_"+ key + ".zip" );
+			File zipFile = new File( this.getZipFolder(), zipFileName + "_" + key + ".zip.tmp" );
+			File zipFileFin = new File( this.getZipFolder(), zipFileName + "_" + key + ".zip" );
 			if( zipFile.exists() )
 			{
 				System.out.println( "Zip file: " + zipFile.getAbsolutePath() + " exists" );
@@ -116,6 +117,14 @@ public class ZipAndSendServlet extends AbstractServlet {
 			}
 			zos.closeEntry();
 			zos.close();
+			if( zipFileFin.exists() )
+			{
+				System.out.println( "Zip file: " + zipFileFin.getAbsolutePath() + " exists" );
+				continue;
+			}			
+			zipFile.renameTo(zipFileFin);
+			
+			response.getWriter().append(zipFileFin.getName()+"|");
 		}		
 		
 		
