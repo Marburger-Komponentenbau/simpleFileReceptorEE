@@ -53,7 +53,7 @@ public class ZipAndSendServlet extends AbstractServlet {
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 		//response.getWriter().append(" - files: ").append(files);
 		//response.getWriter().append("<br>");
-		
+		//request.setAttribute(arg0, arg1);
 		StringTokenizer st = new StringTokenizer( files, "|" );		
 		
 		// tiffFiles zipFiles zuordnen
