@@ -13,6 +13,7 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -53,7 +54,7 @@ public class ZipAndSendServlet extends AbstractServlet {
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 		//response.getWriter().append(" - files: ").append(files);
 		//response.getWriter().append("<br>");
-		//request.setAttribute(arg0, arg1);
+		
 		StringTokenizer st = new StringTokenizer( files, "|" );		
 		
 		// tiffFiles zipFiles zuordnen
@@ -86,6 +87,7 @@ public class ZipAndSendServlet extends AbstractServlet {
 		
 		// zipFiles generieren
 		Iterator<String> keys = zipFiles2TiffFiles.keySet().iterator();
+		String createdZips = "";
 		while( keys.hasNext() )
 		{
 			String key = keys.next();			
@@ -124,9 +126,14 @@ public class ZipAndSendServlet extends AbstractServlet {
 			}			
 			zipFile.renameTo(zipFileFin);
 			
-			response.getWriter().append(zipFileFin.getName()+"|");
-		}		
+			createdZips = createdZips + zipFileFin.getName() + "|";
+			
+			//response.getWriter().append(zipFileFin.getName()+"|");
+		}		 
 		
+		request.setAttribute("createdZips", createdZips);
+	    RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/scanResult.jsp");
+        dispatcher.forward(request, response);			
 		
 		
 	}
