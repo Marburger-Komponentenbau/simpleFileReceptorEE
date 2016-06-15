@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ZipAndSendServlet extends AbstractServlet {
 	private static final long serialVersionUID = 1L;
        
-	String keySeparator = "_GHNW";
+	String keySeparator = ".";//"_GHNW";
 	
 	String zipFileName = "zipFileName";	
 	
