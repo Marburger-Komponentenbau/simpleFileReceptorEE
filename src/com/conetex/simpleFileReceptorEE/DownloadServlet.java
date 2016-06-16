@@ -44,7 +44,7 @@ public class DownloadServlet extends AbstractServlet {
 		else if(folderName.equals("zip")){
 			folder = super.getZipFolder();
 		}
-		else if(folderName.equals("res")){
+		else if(folderName.equals("xml")){
 			folder = super.getResFolder();
 		}		
 		else{
@@ -72,7 +72,10 @@ public class DownloadServlet extends AbstractServlet {
 		 
 		File file = new File(folder, fileName);
 		if( ! file.exists() || ! file.canRead() ){
-			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			response.getWriter().println( file.getAbsolutePath() + " ist nicht vorhanden!" );
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			//response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			System.out.println( "file: " + file.getAbsolutePath() + " nich da!" );
 			return;			
 		}
 		

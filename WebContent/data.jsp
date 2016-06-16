@@ -2235,7 +2235,7 @@ else{
 </p> 
 -->
 
-<form name="ZipSendScanForm" class="inline" method="post" action="/<% out.print(contextPath);%>/ZipSendScan">
+<form name="ZipSendScanForm" class="inline" method="post" action="/<% out.print(contextPath); %>/ZipSendScan">
   <input type="hidden" name="uploadedFiles" id="uploadedFiles" value="|">
   <!-- <button type="submit">_send_</button>  -->
 </form>

@@ -18,6 +18,39 @@ else{
 }
 %>
 <title>Insert title here</title>
+
+<script type="text/javascript">
+function loadXMLDocX() {
+	loadXMLDoc('eine datei.zip');
+}
+function loadXMLDoc(folder, file, target) {
+    var xmlhttp;
+
+    if (window.XMLHttpRequest) {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp = new XMLHttpRequest();
+    } else {
+        // code for IE6, IE5
+        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+           if(xmlhttp.status == 200){
+              document.getElementById(target).innerHTML = xmlhttp.responseText;
+           }
+           else {
+              //alert("mein error: ".concat(xmlhttp.status));
+              document.getElementById(target).innerHTML = xmlhttp.responseText;
+           }
+        }
+    };
+    xmlhttp.open("GET", "/<% out.print(contextPath); %>/download?folder=".concat(folder).concat("&file=").concat(file), true);
+    xmlhttp.send();
+}
+</script>
+
+
 </head>
 <body>
 
@@ -49,7 +82,12 @@ else{
 
 %>
 </p> 
+<p style="text-align: center;">
+<a href="javascript:loadXMLDoc('xml','build runnable Jars.xml','myDiv')" class="linkButton">load</a>
+</p>
 
+<div id="myDiv">
+</div>
 
 </body>
 </html>
