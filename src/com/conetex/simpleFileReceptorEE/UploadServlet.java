@@ -32,9 +32,9 @@ public class UploadServlet extends AbstractServlet {
 	//private static final String dataFolder = "C://_//02 Eclipse JEE Workspace//_GitHub//simpleFileReceptorEE//data//";
 	//private static final String dataFolder = "C://dev//Projekte//EclipseEE_WS//data//";
 	//private static final String dataFolder = "data//";
-	private static String dataFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
+	//private static String dataFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
 	
-	private static File dataFolder = null; 
+	//private static File dataFolder = null; 
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -56,7 +56,7 @@ public class UploadServlet extends AbstractServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	    
-        File folder = super.getFolderData();
+        File folder = super.getDataFolder();
         
 	    //String description = request.getParameter("description"); // Retrieves <input type="text" name="description">
 	    Part filePart1 = request.getPart("file"); // Retrieves <input type="file" name="file">
@@ -116,26 +116,7 @@ public class UploadServlet extends AbstractServlet {
 		return fos;
 	}
 	
-	private static File getFile(File folder, String fname) {
-		File file = new File(folder, fname);
-		if (file.exists()) {
-			String fnameEnd = fname;
-			String fnameBegin = "";
-			
-			int endIndex = fname.lastIndexOf(".");
-			if (endIndex != -1) {
-				fnameEnd = fname.substring(endIndex, fname.length());
-				fnameBegin = fname.substring(0, endIndex);
-			}
-			
-			int i = 0;
-			while (file.exists()) {
-				// fname.substring(0, endIndex);
-				file = new File(folder, fnameBegin + "." + Integer.toString(i++) + fnameEnd);
-			}
-		}
-		return file;
-	}	
+	
 	
 	
 }

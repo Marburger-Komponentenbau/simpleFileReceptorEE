@@ -1,6 +1,9 @@
 package com.conetex.simpleFileReceptorEE;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
@@ -21,31 +24,57 @@ public abstract class AbstractServlet extends HttpServlet {
 	private static String zipFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
 	private static File zipFolder = null;
 	
+	private static String resultFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
+	private static File resultFolder = null;
+	
 	public AbstractServlet() {
         super();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        InputStream input = classLoader.getResourceAsStream("servlet.properties");
+        // ...
+		Properties properties = new Properties();
+		try {
+			properties.load(input);
+		} catch (IOException e) {
+			System.out.println("Error reading...");
+			e.printStackTrace();
+		}
+		System.out.println("Properties found...");
     }
     
-	public File getFolderData(){
+	public File getDataFolder(){
         return getContextFolder(getParentFolderData());
 	}
-	
-	public File getZipFolder(){
-        return getContextFolder(getParentFolderZip());
-	}
-	
-	public static File getParentFolderData(){
+
+	private static File getParentFolderData(){
 		if(dataFolder == null){
 			dataFolder = createFolder(dataFolderName);
 		}
 		return dataFolder;
-	}
+	}	
 	
-	public static File getParentFolderZip(){
+	public File getZipFolder(){
+        return getContextFolder(getParentFolderZip());
+	}
+		
+	private static File getParentFolderZip(){
 		if(zipFolder == null){
 			zipFolder = createFolder(zipFolderName);
 		}
 		return zipFolder;
 	}	
+	
+	public File getResFolder(){
+        return getContextFolder(getParentFolderRes());
+	}
+
+	private static File getParentFolderRes(){
+		if(resultFolder == null){
+			resultFolder = createFolder(resultFolderName);
+		}
+		return resultFolder;
+	}	
+	
 	
 	
 	private File getContextFolder(File parentFolder){
@@ -77,6 +106,25 @@ public abstract class AbstractServlet extends HttpServlet {
 		return folder;
 	}
 	
-	
+	public static File getFile(File folder, String fname) {
+		File file = new File(folder, fname);
+		if (file.exists()) {
+			String fnameEnd = fname;
+			String fnameBegin = "";
+			
+			int endIndex = fname.lastIndexOf(".");
+			if (endIndex != -1) {
+				fnameEnd = fname.substring(endIndex, fname.length());
+				fnameBegin = fname.substring(0, endIndex);
+			}
+			
+			int i = 0;
+			while (file.exists()) {
+				// fname.substring(0, endIndex);
+				file = new File(folder, fnameBegin + "." + Integer.toString(i++) + fnameEnd);
+			}
+		}
+		return file;
+	}	
 	
 }

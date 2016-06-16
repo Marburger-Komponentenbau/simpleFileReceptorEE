@@ -29,9 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 public class ZipAndSendServlet extends AbstractServlet {
 	private static final long serialVersionUID = 1L;
        
-	String keySeparator = ".";//"_GHNW";
+	String keySeparator = "_GHNW";//;
 	
-	String zipFileName = "zipFileName";	
+	String zipFileName = "";//zipFileName	
 	
 	
     /**
@@ -61,7 +61,7 @@ public class ZipAndSendServlet extends AbstractServlet {
 		Map<String,Vector<File>> zipFiles2TiffFiles = new HashMap<String, Vector<File>> ();
 		while ( st.hasMoreTokens() ){
 			String filename = st.nextToken();
-			File tiffFile = new File(super.getFolderData(), filename);
+			File tiffFile = new File(super.getDataFolder(), filename);
 			if(! tiffFile.exists() || ! tiffFile.canRead() ){
 				continue;
 			}
@@ -91,8 +91,8 @@ public class ZipAndSendServlet extends AbstractServlet {
 		while( keys.hasNext() )
 		{
 			String key = keys.next();			
-			File zipFile = new File( this.getZipFolder(), zipFileName + "_" + key + ".zip.tmp" );
-			File zipFileFin = new File( this.getZipFolder(), zipFileName + "_" + key + ".zip" );
+			File zipFile = getFile( this.getZipFolder(), zipFileName + key + ".zip.tmp" );
+			File zipFileFin = getFile( this.getZipFolder(), zipFileName + key + ".zip" );
 			if( zipFile.exists() )
 			{
 				System.out.println( "Zip file: " + zipFile.getAbsolutePath() + " exists" );
