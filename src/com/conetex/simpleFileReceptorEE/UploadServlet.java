@@ -76,6 +76,7 @@ public class UploadServlet extends AbstractServlet {
 	        System.out.println(fileName);
 	        InputStream fileContent = filePart.getInputStream();
 	        outFile = writeToFileSystem(folder, fileName, fileContent);
+	        fileContent.close();// TODO funzts jetzt noch?
 	        if(outFile != null){
 	    	    response.getWriter().append(outFile.getName()+"|");	        	
 	        }
@@ -83,8 +84,11 @@ public class UploadServlet extends AbstractServlet {
 	    
 	}
 
-	private static File writeToFileSystem(File folder, String fname, InputStream in){
-		File outFile = getFile(folder, fname);
+	private File writeToFileSystem(File folder, String fname, InputStream in){
+		File outFile = new File(folder, fname);
+		if(outFile.exists() ){
+			return outFile;
+		}
 		OutputStream out = getOutputStream(outFile);
 		if(out == null || in == null){
 			return null;

@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ZipAndSendServlet extends AbstractServlet {
 	private static final long serialVersionUID = 1L;
        
-	String keySeparator = "_GHNW";//;
+	
 	
 	String zipFileName = "";//zipFileName	
 	
@@ -50,7 +50,12 @@ public class ZipAndSendServlet extends AbstractServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String files = request.getParameter("uploadedFiles");
-		
+		if(files == null){
+			request.setAttribute("createdZips", "");
+		    RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/scanResult.jsp");
+	        dispatcher.forward(request, response);				
+			return;
+		}
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 		//response.getWriter().append(" - files: ").append(files);
 		//response.getWriter().append("<br>");
@@ -66,7 +71,7 @@ public class ZipAndSendServlet extends AbstractServlet {
 				continue;
 			}
 			// tiffFile vorhanden...
-		    int idx = filename.indexOf( keySeparator );
+		    int idx = filename.indexOf( super.getKeySeparator() );
 			if( idx != -1 )
 			{
 				String key = filename.substring( 0, idx );
@@ -115,7 +120,7 @@ public class ZipAndSendServlet extends AbstractServlet {
 					zos.write( buffer, 0, len );
 				}
 				fin.close();
-				tiffFile.delete();
+				//tiffFile.delete();
 			}
 			zos.closeEntry();
 			zos.close();

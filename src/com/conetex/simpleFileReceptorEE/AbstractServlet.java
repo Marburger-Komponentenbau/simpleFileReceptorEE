@@ -18,15 +18,26 @@ public abstract class AbstractServlet extends HttpServlet {
 	private static String defaultFolderName = "data//";
 	private static String defaultSubFolderName = "dft";
 	
-	private static String dataFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
-	private static File dataFolder = null;
+	private String dataFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
+	private File dataFolder = null;
 
-	private static String zipFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
-	private static File zipFolder = null;
+	private String zipFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
+	private File zipFolder = null;
 	
-	private static String resultFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
-	private static File resultFolder = null;
+	private String resultFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
+	private File resultFolder = null;
 	
+	private String keySeparator = "_GHNW";//;
+	private String runIdSeparator = ".";
+	
+	public String getRunIdSeparator() {
+		return runIdSeparator;
+	}
+
+	public String getKeySeparator() {
+		return keySeparator;
+	}
+
 	public AbstractServlet() {
         super();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -36,43 +47,48 @@ public abstract class AbstractServlet extends HttpServlet {
 		try {
 			properties.load(input);
 		} catch (IOException e) {
-			System.out.println("Error reading...");
+			System.out.println("Error reading Properties...");
 			e.printStackTrace();
 		}
 		System.out.println("Properties found...");
+		this.dataFolderName = properties.getProperty("imageFolderParent", this.dataFolderName);
+		this.zipFolderName = properties.getProperty("zipFolderParent", this.zipFolderName);
+		this.resultFolderName = properties.getProperty("resultFolderParent", this.resultFolderName);
+		this.keySeparator = properties.getProperty("keySeparator", this.keySeparator);
+		this.runIdSeparator = properties.getProperty("runIdSeparator", this.runIdSeparator);
     }
     
 	public File getDataFolder(){
-        return getContextFolder(getParentFolderData());
+        return getContextFolder(this.getParentFolderData());
 	}
 
-	private static File getParentFolderData(){
-		if(dataFolder == null){
-			dataFolder = createFolder(dataFolderName);
+	private File getParentFolderData(){
+		if(this.dataFolder == null){
+			this.dataFolder = createFolder(this.dataFolderName);
 		}
-		return dataFolder;
+		return this.dataFolder;
 	}	
 	
 	public File getZipFolder(){
-        return getContextFolder(getParentFolderZip());
+        return getContextFolder(this.getParentFolderZip());
 	}
 		
-	private static File getParentFolderZip(){
-		if(zipFolder == null){
-			zipFolder = createFolder(zipFolderName);
+	private File getParentFolderZip(){
+		if(this.zipFolder == null){
+			this.zipFolder = createFolder(this.zipFolderName);
 		}
-		return zipFolder;
+		return this.zipFolder;
 	}	
 	
 	public File getResFolder(){
-        return getContextFolder(getParentFolderRes());
+        return this.getContextFolder(this.getParentFolderRes());
 	}
 
-	private static File getParentFolderRes(){
-		if(resultFolder == null){
-			resultFolder = createFolder(resultFolderName);
+	private File getParentFolderRes(){
+		if(this.resultFolder == null){
+			this.resultFolder = createFolder(this.resultFolderName);
 		}
-		return resultFolder;
+		return this.resultFolder;
 	}	
 	
 	
@@ -106,7 +122,7 @@ public abstract class AbstractServlet extends HttpServlet {
 		return folder;
 	}
 	
-	public static File getFile(File folder, String fname) {
+	public File getFile(File folder, String fname) {
 		File file = new File(folder, fname);
 		if (file.exists()) {
 			String fnameEnd = fname;
@@ -121,7 +137,7 @@ public abstract class AbstractServlet extends HttpServlet {
 			int i = 0;
 			while (file.exists()) {
 				// fname.substring(0, endIndex);
-				file = new File(folder, fnameBegin + "." + Integer.toString(i++) + fnameEnd);
+				file = new File(folder, fnameBegin + runIdSeparator + Integer.toString(i++) + fnameEnd);
 			}
 		}
 		return file;
