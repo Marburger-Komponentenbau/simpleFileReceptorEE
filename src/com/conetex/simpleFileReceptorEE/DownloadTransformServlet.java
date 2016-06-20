@@ -22,7 +22,7 @@ import javax.xml.transform.stream.StreamSource;
 /**
  * Servlet implementation class DownloadServlet
  */
-@WebServlet({ "/transform" })
+@WebServlet({ "/transform2" })
 public class DownloadTransformServlet extends AbstractServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -66,7 +66,7 @@ public class DownloadTransformServlet extends AbstractServlet {
 						  + "<xsl:template match=\"/\">"
 						  + ""
 						  + "	<xsl:text>&lt;ul class=\"entities\"&gt;</xsl:text>"
-						  + "		<xsl:for-each select=\"SCAN:GetScoreResponse/SCAN:kernelStructureOutput/SCAN:entities\">"
+						  + "		<xsl:for-each select=\"*/SCAN:entities\">"
 						  + "			 <xsl:text>&lt;li class=\"entity\"&gt;</xsl:text>"
 						  + "				<xsl:value-of select=\"SCAN:name\"/>"
 						  + "				<xsl:text>&lt;table class=\"values\"&gt;</xsl:text>"

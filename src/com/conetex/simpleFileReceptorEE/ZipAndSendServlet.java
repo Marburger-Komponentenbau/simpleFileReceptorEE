@@ -71,21 +71,22 @@ public class ZipAndSendServlet extends AbstractServlet {
 				continue;
 			}
 			// tiffFile vorhanden...
+			String key = filename;
 		    int idx = filename.indexOf( super.getKeySeparator() );
 			if( idx != -1 )
 			{
-				String key = filename.substring( 0, idx );
-				if( zipFiles2TiffFiles.containsKey( key ) )
-				{
-					Vector<File> tiffFiles = zipFiles2TiffFiles.get( key );
-					tiffFiles.add( tiffFile );
-				}
-				else{
-					Vector<File> tiffFiles = new Vector<File>();
-					zipFiles2TiffFiles.put( key, tiffFiles );
-					tiffFiles.add( tiffFile );
-				}				
-			}		     
+				key = filename.substring( 0, idx );
+			}
+			if( zipFiles2TiffFiles.containsKey( key ) )
+			{
+				Vector<File> tiffFiles = zipFiles2TiffFiles.get( key );
+				tiffFiles.add( tiffFile );
+			}
+			else{
+				Vector<File> tiffFiles = new Vector<File>();
+				zipFiles2TiffFiles.put( key, tiffFiles );
+				tiffFiles.add( tiffFile );
+			}				
 		    //response.getWriter().append( filename );
 		    //response.getWriter().append("<br>");
 		}
@@ -96,8 +97,8 @@ public class ZipAndSendServlet extends AbstractServlet {
 		while( keys.hasNext() )
 		{
 			String key = keys.next();			
-			File zipFile = getFile( this.getZipFolder(), zipFileName + key + ".zip.tmp" );
-			File zipFileFin = getFile( this.getZipFolder(), zipFileName + key + ".zip" );
+			File zipFile = super.getNewRenamedFile( this.getZipFolder(), zipFileName + key + ".zip.tmp" );
+			File zipFileFin = super.getNewRenamedFile( this.getZipFolder(), zipFileName + key + ".zip" );
 			if( zipFile.exists() )
 			{
 				System.out.println( "Zip file: " + zipFile.getAbsolutePath() + " exists" );
@@ -106,6 +107,7 @@ public class ZipAndSendServlet extends AbstractServlet {
 			FileOutputStream fos = new FileOutputStream( zipFile );
 	    	ZipOutputStream zos = new ZipOutputStream( fos );
 	    	System.out.println( "Create Zip file: "+ zipFile.getAbsolutePath() );
+	    	String zippedFiles = "";
 	    	byte[] buffer = new byte[1024];
 			Vector<File> sub = zipFiles2TiffFiles.get( key );
 			for( File tiffFile : sub )
@@ -120,6 +122,7 @@ public class ZipAndSendServlet extends AbstractServlet {
 					zos.write( buffer, 0, len );
 				}
 				fin.close();
+				zippedFiles = zippedFiles + tiffFile.getName() + "|";
 				//tiffFile.delete();
 			}
 			zos.closeEntry();
@@ -132,7 +135,7 @@ public class ZipAndSendServlet extends AbstractServlet {
 			zipFile.renameTo(zipFileFin);
 			
 			createdZips = createdZips + zipFileFin.getName() + "|";
-			
+			request.setAttribute(zipFileFin.getName(), zippedFiles);
 			//response.getWriter().append(zipFileFin.getName()+"|");
 		}		 
 		
