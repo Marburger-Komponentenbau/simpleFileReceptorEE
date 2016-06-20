@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Collection;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -55,8 +56,19 @@ public class UploadServlet extends AbstractServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	    
-        File folder = super.getDataFolder();
+
+		File folder = null; 
+				
+		String folderName = request.getParameter("absTargetPath");
+		if(folderName == null || folderName.length() < 3){
+			folder = super.getDataFolder();
+		}	
+		else{
+			folder = new File(folderName);
+	        if ( !folder.exists() || !folder.isDirectory() ) {
+	        	folder = super.getDataFolder();
+	        }
+		}
         
 	    //String description = request.getParameter("description"); // Retrieves <input type="text" name="description">
 	    Part filePart1 = request.getPart("file"); // Retrieves <input type="file" name="file">
@@ -75,7 +87,11 @@ public class UploadServlet extends AbstractServlet {
 	        System.out.println(filePart.getContentType() + " - " + filePart.getName());
 	        System.out.println(fileName);
 	        InputStream fileContent = filePart.getInputStream();
-	        outFile = writeToFileSystem(folder, fileName, fileContent);
+	        if( folderName != null && !(folderName.length() < 3) ){
+	        	// OVERWRITE // TODO funktioniert irgendwie nicht ...
+	        	super.deleteFile(folder, fileName);
+	        }
+	       	outFile = writeToFileSystem(folder, fileName, fileContent);
 	        fileContent.close();// TODO funzts jetzt noch?
 	        if(outFile != null){
 	    	    response.getWriter().append(outFile.getName()+"|");	        	

@@ -53,16 +53,17 @@ public class DownloadServlet extends AbstractServlet {
 		}
 		
 		String typ = "";
-		if(fileName.endsWith(".xml")){
+		String fileNameLowerCase = fileName.toLowerCase();
+		if(fileNameLowerCase.endsWith(".xml")){
 			typ = "text/xml";
 		}
-		else if(fileName.endsWith(".tiff")){
+		else if(fileNameLowerCase.endsWith(".tiff") || fileNameLowerCase.endsWith(".tif")){
 			typ = "image/tiff";
 		}
-		else if(fileName.endsWith(".pdf")){
+		else if(fileNameLowerCase.endsWith(".pdf")){
 			typ = "application/pdf";
 		}
-		else if(fileName.endsWith(".zip")){
+		else if(fileNameLowerCase.endsWith(".zip")){
 			typ = "application/gzip";
 		}		 
 		else{

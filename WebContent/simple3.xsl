@@ -13,26 +13,33 @@
 	indent="yes"
 	media-type="text/plain" />
   
-<xsl:template match="/">
 
+<xsl:template match="/">
+     <xsl:apply-templates select="SCAN:GetScoreResponse/SCAN:kernelStructureOutput/SCAN:entities" />
+     <xsl:apply-templates select="SCAN:GetScoreRequest/SCAN:kernelStructureInput/SCAN:entities" />
+</xsl:template>
+<!-- 
+<xsl:for-each select="/SCAN:entities"></xsl:for-each>
+ -->
+
+<xsl:template match="SCAN:entities">
 	<xsl:text>&lt;ul class="entities"&gt;</xsl:text>
-		<xsl:for-each select="SCAN:GetScoreResponse/SCAN:kernelStructureOutput/SCAN:entities">
-			 <xsl:text>&lt;li class="entity"&gt;</xsl:text>
-				<xsl:value-of select="SCAN:name"/>
-				<xsl:text>&lt;table class="values"&gt;</xsl:text>
-					<xsl:for-each select="SCAN:values">
-						<xsl:text>&lt;tr&gt;</xsl:text>
-							<xsl:text>&lt;td&gt;</xsl:text>
-								<xsl:value-of select="SCAN:name"/>
-							<xsl:text>&lt;/td&gt;</xsl:text>
-							<xsl:text>&lt;td&gt;</xsl:text>
-								<xsl:value-of select="SCAN:value"/>
-							<xsl:text>&lt;/td&gt;</xsl:text>
-						<xsl:text>&lt;/tr&gt;</xsl:text>
-					</xsl:for-each>
-				<xsl:text>&lt;/table&gt;</xsl:text>
-			<xsl:text>&lt;/li&gt;</xsl:text>
-		</xsl:for-each>
+		 <xsl:text>&lt;li class="entity"&gt;</xsl:text>
+			<xsl:value-of select="SCAN:name"/>
+			<xsl:text>&lt;table class="values"&gt;</xsl:text>
+				<xsl:for-each select="SCAN:values">
+					<xsl:text>&lt;tr&gt;</xsl:text>
+						<xsl:text>&lt;td&gt;</xsl:text>
+							<xsl:value-of select="SCAN:name"/>
+						<xsl:text>&lt;/td&gt;</xsl:text>
+						<xsl:text>&lt;td&gt;</xsl:text>
+							<xsl:value-of select="SCAN:value"/>
+						<xsl:text>&lt;/td&gt;</xsl:text>
+					<xsl:text>&lt;/tr&gt;</xsl:text>
+				</xsl:for-each>
+			<xsl:text>&lt;/table&gt;</xsl:text>
+			<xsl:apply-templates select="SCAN:entities" />
+		<xsl:text>&lt;/li&gt;</xsl:text>
 	<xsl:text>&lt;/ul&gt;</xsl:text>
 	
 </xsl:template>

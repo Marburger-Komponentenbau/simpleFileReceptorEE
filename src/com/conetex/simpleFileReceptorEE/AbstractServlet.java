@@ -122,7 +122,7 @@ public abstract class AbstractServlet extends HttpServlet {
 		return folder;
 	}
 	
-	public File getFile(File folder, String fname) {
+	public File getNewRenamedFile(File folder, String fname) {
 		File file = new File(folder, fname);
 		if (file.exists()) {
 			String fnameEnd = fname;
@@ -142,5 +142,12 @@ public abstract class AbstractServlet extends HttpServlet {
 		}
 		return file;
 	}	
+	
+	public File deleteFile(File folder, String fname) {
+		File file = new File(folder, fname);
+		file.deleteOnExit();
+		System.out.println("DEL: " + file.getAbsolutePath());
+		return file;
+	}
 	
 }

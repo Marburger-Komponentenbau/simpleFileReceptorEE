@@ -7,13 +7,13 @@
 String contextPath = request.getContextPath();
 //String contextPath = request.getRequestURI();
 if(contextPath == null || contextPath.length() < 1) {
-	contextPath = "Receptor";
+	contextPath = "TU-C  -  Test Data Transfer";
 }
 else{
 	contextPath = contextPath.replace("/","");
 }
 %>
-<title>TU-D  -  Test Data Transfer  -  01-15-42 | Risk Calculation Kernels</title>
+<title><% out.print(contextPath); %>  -  01-15-42 | Risk Calculation Kernels</title>
 
 <script type="text/javascript">
 function submitZipSendScanForm()
@@ -1799,7 +1799,6 @@ body {
 	padding-left: 10px;
 	font-size: 80%;
 	float: left;
-
 }
 .cobaLogo {
     text-align: right;
@@ -1816,7 +1815,7 @@ body {
 	font-weight: bold;
     background-color: #FFCF31;
 	margin-bottom: 10px;
-   
+    margin-top: 2px;
 }
 		
 
@@ -2215,7 +2214,7 @@ body {
  <div class="kernelLogo">01-15-42 &nbsp;|&nbsp; Risk Calculation Kernels</div>
  <div class="cobaLogo"><img src="https://portal.comproof.net/vpn/images/CoBa.png"></div> 
 
-<div class="title"><% out.print(contextPath); %> - Test Data Transfer</div> <!---->
+<div class="title"><% out.print(contextPath); %></div> <!---->
 
 <!-- Change /upload-target to your upload address -->
 <form class="dropzone" action=/<% out.print(contextPath);%>/upload></form>
@@ -2241,7 +2240,7 @@ else{
 </form>
 
 <p style="text-align: center;">
-<a href="javascript: submitZipSendScanForm()" class="linkButton">SCAN</a>
+<a href="javascript: submitZipSendScanForm()" class="linkButton">recognize!</a>
 </p>
 
 </body>
