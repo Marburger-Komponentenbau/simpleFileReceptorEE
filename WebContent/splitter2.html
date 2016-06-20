@@ -6,7 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>jQuery Vertical splitter</title>
 <script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="jquery.cookie.js"></script>
+<!--<script type="text/javascript" src="jquery.cookie.js"></script>-->
 <script type="text/javascript" src="splitter.js"></script>
 
 <!-- General page styles (not critical to the demos) -->
@@ -94,6 +94,10 @@ AU-wp1 (1).jpg
 	</div>
 
 </div>
+
+,
+		accessKey: 'I',
+		cookie: "vsplitter"
 -->
 </body>
 <script type="text/javascript">
@@ -103,9 +107,7 @@ $().ready(function() {
 		type: "v",
 		outline: true,
 		minLeft: 100, sizeLeft: 500, minRight: 100,
-		resizeToWidth: true,
-		cookie: "vsplitter",
-		accessKey: 'I'
+		resizeToWidth: true
 	});
 });
 

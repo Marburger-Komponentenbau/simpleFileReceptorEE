@@ -20,7 +20,7 @@ else{
 <title><% out.print(contextPath); %>  -  OCR Results</title>
 
 <script type="text/javascript" src="./jquery.js"></script>
-<script type="text/javascript" src="./jquery.cookie.js"></script>
+<!-- <script type="text/javascript" src="./jquery.cookie.js"></script>  -->
 <script type="text/javascript" src="./splitter.js"></script>
 
 <script type="text/javascript">
@@ -58,30 +58,31 @@ function loadXMLTransformed(folder, file, target) {
 
     <style>
 
-#MySplitter {
+.Splitter {
 	height: 400px;
+	min-height: 300px;
 	margin: 1em 3em;
 	/*border: 4px solid #bdb;*/
 	/* No padding allowed */
 }
-#LeftPane {
-	/*background: #efe;*/
-	background: green;
+.LeftPane {
+	/*background: #efe;
+	background: green;*/
 	overflow: auto;
 	/* No margin or border allowed */
 }
-#RightPane {
-	/*background: #f8fff8;*/
-	background: red;
+.RightPane {
+	/*background: #f8fff8;
+	background: red;*/
 	overflow: auto;
 	/* No margin or border allowed */
 }
-#MySplitter .vsplitbar {
+.Splitter .vsplitbar {
 	width: 6px;
 	background: #FFCF31 url(vgrabber.gif) no-repeat center;
 	/* background: #aca url(vgrabber.gif) no-repeat center; */
 }
-#MySplitter .vsplitbar.active {
+.Splitter .vsplitbar.active {
     background: #FFCF31 url(vgrabber.gif) no-repeat center;
 	/* background: #da8 url(vgrabber.gif) no-repeat center; */
 	opacity: 0.7;
@@ -136,7 +137,7 @@ body {
 
 
 li.ImageFileListItem a.ImageFileLink img {
-    max-width: 300px;
+    max-width: 600px;
 }
 
 
@@ -176,7 +177,7 @@ ul.ZipFilesList
 
 <div class="Res">
 <% 
-
+int splitterid = 0;
 Object zipFilenamesObj = request.getAttribute("createdZips");
 if(zipFilenamesObj == null){
 	out.println("???" );
@@ -194,7 +195,7 @@ else{
 		out.println( "<div class=\"ZipFile\">Input: " );	
 		out.println( "<a href=\"/" + contextPath + "/download?folder=zip&file=" + zipFilename + "\">" + zipFilename + "</a>" );//
 		out.println( "</div>" );
-		out.println( "<div id=\"MySplitter\">" );
+		out.println( "<div id=\"Splitter" + Integer.toString(++splitterid) + "\" class=\"Splitter\">" );
 		out.println( "<div class=\"LeftPane\">" );	
 		Object imgFilenamesObj = request.getAttribute( zipFilename );
 
@@ -269,14 +270,22 @@ else{
 <script type="text/javascript">
 
 $().ready(function() {
-	$("#MySplitter").splitter({
-		type: "v",
-		outline: true,
-		minLeft: 100, sizeLeft: 500, minRight: 100,
-		resizeToWidth: true,
-		cookie: "vsplitter",
-		accessKey: 'I'
-	});
+	<%
+	int i = 0;
+	while (++i <= splitterid){
+		out.println( "$(\"#Splitter" + Integer.toString(i) + "\").splitter({" +
+							"type: \"v\"," +
+							"outline: false," +
+							"minLeft: 100, sizeLeft: 500, minRight: 100," +
+							"resizeToWidth: true" +
+						"});"
+				);
+		/*
+							"cookie: \"vsplitter" + Integer.toString(i) + "\"," +
+							"accessKey: 'I'" +		
+		*/
+	}
+	%>	
 });
 
 </script>
