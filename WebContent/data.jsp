@@ -2210,7 +2210,7 @@ body {
 
 </head>
 <body>
-<div class="full_widthx"></div>
+ <div class="full_widthx"></div>
  <div class="kernelLogo">01-15-42 &nbsp;|&nbsp; Risk Calculation Kernels</div>
  <div class="cobaLogo"><img src="https://portal.comproof.net/vpn/images/CoBa.png"></div> 
 

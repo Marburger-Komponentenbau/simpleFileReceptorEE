@@ -19,7 +19,9 @@ else{
 %>
 <title><% out.print(contextPath); %>  -  OCR Results</title>
 
-<script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="./jquery.js"></script>
+<script type="text/javascript" src="./jquery.cookie.js"></script>
+<script type="text/javascript" src="./splitter.js"></script>
 
 <script type="text/javascript">
 
@@ -42,7 +44,7 @@ function loadXMLTransformed(folder, file, target) {
            }
            else {
               //alert("mein error: ".concat(xmlhttp.status));
-              document.getElementById(target).innerHTML = xmlhttp.responseText;
+              document.getElementById(target).innerHTML = "bin noch nicht so weit! versuchen Sie es gleich nochmal...";
            }
         }
     };
@@ -50,54 +52,47 @@ function loadXMLTransformed(folder, file, target) {
     xmlhttp.send();
 }
 
-//<![CDATA[
-$(window).load(function(){
-  $('#mainSplitter').jqxSplitter({
-      width: 300,
-      height: 300,
-      theme: 'energyblue',
-      panels: [{
-          size: 200
-      }]
-  });
-  $('#mainSplitter').on('resize', function (event) {
-      displayEvent(event);
-  });
 
-  $('#mainSplitter').on('expanded', function (event) {
-      displayEvent(event);
-  });
-
-  $('#mainSplitter').on('collapsed', function (event) {
-      displayEvent(event);
-  });
-
-  function capitaliseFirstLetter(string) {
-      return string.charAt(0).toUpperCase() + string.slice(1);
-  }
-
-  function displayEvent(event) {
-      var eventData = "Event:" + capitaliseFirstLetter(event.type);
-      eventData += ", Panel 1: " + event.args.panels[0].size;
-      eventData += ", Panel 2: " + event.args.panels[1].size;
-      $('#events').jqxPanel('prepend', '<div class="item" style="margin-top: 5px;">' + eventData + '</div>');
-  }
-  $('#events').jqxPanel({
-      theme: 'energyblue',
-      height: '250px',
-      width: '450px'
-  });
-});//]]> 
 
 </script>
 
     <style>
 
+#MySplitter {
+	height: 400px;
+	margin: 1em 3em;
+	/*border: 4px solid #bdb;*/
+	/* No padding allowed */
+}
+#LeftPane {
+	/*background: #efe;*/
+	background: green;
+	overflow: auto;
+	/* No margin or border allowed */
+}
+#RightPane {
+	/*background: #f8fff8;*/
+	background: red;
+	overflow: auto;
+	/* No margin or border allowed */
+}
+#MySplitter .vsplitbar {
+	width: 6px;
+	background: #FFCF31 url(vgrabber.gif) no-repeat center;
+	/* background: #aca url(vgrabber.gif) no-repeat center; */
+}
+#MySplitter .vsplitbar.active {
+    background: #FFCF31 url(vgrabber.gif) no-repeat center;
+	/* background: #da8 url(vgrabber.gif) no-repeat center; */
+	opacity: 0.7;
+}
 
 body {
+/* padding: 10px; */
     color: black;
     font-family: Segoe UI, Tahoma,Verdana, Helvetica, Arial, sans-serif; 
 }
+
 .linkButton:link, .linkButton:visited {
     background-color: #FFCF31;
     color: black;
@@ -119,7 +114,6 @@ body {
 	padding-left: 10px;
 	font-size: 80%;
 	float: left;
-
 }
 .cobaLogo {
     text-align: right;
@@ -139,35 +133,13 @@ body {
     margin-top: 2px;
 }
 
-hr, .res {
-    
-    float: clear;
-}
-ul.ZipFilesList {
-    background-color: yellow;
-}
-div.ImageFiles {
-    background-color: red;
-    
-    height:400px;
-    overflow-y: scroll; 
-    resize:both;
-    overflow:auto; /* something other than visible */
-    float: left;
-}
-div.xml {
-    background-color: blue;
-    height:400px;
-    overflow-y: scroll;     
+
+
+li.ImageFileListItem a.ImageFileLink img {
+    max-width: 300px;
 }
 
-div.RecognitionResultAndLink {
-    background-color: green;
-}
-div.KernelResponseAndLink {
-    background-color: green;
-    float: clear;
-}
+
 <!--
 
 ul.ZipFilesList
@@ -193,38 +165,18 @@ ul.ZipFilesList
 
 </head>
 <body>
+ 
  <div class="full_widthx"></div>
  <div class="kernelLogo">01-15-42 &nbsp;|&nbsp; Risk Calculation Kernels</div>
  <div class="cobaLogo"><img src="https://portal.comproof.net/vpn/images/CoBa.png"></div> 
 
- <div class="title"><% out.print(contextPath); %>  -  OCR Results</div>
+ <div class="title"><% out.print(contextPath); %></div> <!---->
 
-<hr>
-<div id='jqxWidget'>
-    <div id="container" style="float: left">
-        <div id="mainSplitter">
-            <div class="splitter-panel" style="background-color:#F5FFF2;"><span style="margin: 5px;">Panel 1</span>
-
-            </div>
-            <div class="splitter-panel" style="background-color:#F5FFF2;"><span style="margin: 5px;">Panel 2</span>
-
-            </div>
-        </div>
-        <br />
-        <div style="font-family: Verdana; font-size: 13;">Events:</div>
-        <div id="events" style="border-width: 0px;"></div>
-    </div>
-</div>
-
-<hr>
-<p>c</p>
-<p>c</p>
-<p>c</p>
 
 
 <div class="Res">
 <% 
-/*
+
 Object zipFilenamesObj = request.getAttribute("createdZips");
 if(zipFilenamesObj == null){
 	out.println("???" );
@@ -242,8 +194,8 @@ else{
 		out.println( "<div class=\"ZipFile\">Input: " );	
 		out.println( "<a href=\"/" + contextPath + "/download?folder=zip&file=" + zipFilename + "\">" + zipFilename + "</a>" );//
 		out.println( "</div>" );
-
-		out.println( "<div class=\"ImageFiles\">" );	
+		out.println( "<div id=\"MySplitter\">" );
+		out.println( "<div class=\"LeftPane\">" );	
 		Object imgFilenamesObj = request.getAttribute( zipFilename );
 
 		if(imgFilenamesObj == null){
@@ -273,11 +225,12 @@ else{
 				}
 				
 				out.println( "</li>" );
-			}	
+			}
+			out.println( "</ul>" );
 		}		
 		out.println( "</div>" );		
 		
-		out.println( "<div class=\"xml\">" );
+		out.println( "<div class=\"RightPane\">" );
 		
 		String requestXmlFilename = "request_170900_2005334297_7298683_0012606090.xml";//response_" + zipFilename.replace(".zip", ".xml")
 		//out.println( "<a href=\"/" + contextPath + "/download?folder=res&file=response_" + zipFilename.replace(".zip", ".xml") + "\">RK-Response: response_" + zipFilename.replace(".zip", ".xml") + "</a>" );//
@@ -295,12 +248,13 @@ else{
 		             + " class=\"xmlLoadButton\">Rechenkern Response: " + responseXmlFilename + "</a></div>" );
 		
 		out.println( "</div>" );	
+		out.println( "</div>" );
 		
 		out.println( "</li>" );
 	}
 	out.println( "</ul>" );
 }
-*/
+
 %>
 
 </div>
@@ -312,4 +266,18 @@ else{
 -->
 
 </body>
+<script type="text/javascript">
+
+$().ready(function() {
+	$("#MySplitter").splitter({
+		type: "v",
+		outline: true,
+		minLeft: 100, sizeLeft: 500, minRight: 100,
+		resizeToWidth: true,
+		cookie: "vsplitter",
+		accessKey: 'I'
+	});
+});
+
+</script>
 </html>

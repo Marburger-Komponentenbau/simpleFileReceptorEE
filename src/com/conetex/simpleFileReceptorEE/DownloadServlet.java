@@ -60,6 +60,9 @@ public class DownloadServlet extends AbstractServlet {
 		else if(fileNameLowerCase.endsWith(".tiff") || fileNameLowerCase.endsWith(".tif")){
 			typ = "image/tiff";
 		}
+		else if(fileNameLowerCase.endsWith(".jpg") || fileNameLowerCase.endsWith(".jpeg")){
+			typ = "image/jpeg";
+		}		
 		else if(fileNameLowerCase.endsWith(".pdf")){
 			typ = "application/pdf";
 		}
