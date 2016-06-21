@@ -1,0 +1,3 @@
+http://localhost:8080/simpleFileReceptorEE/transform?folder=xml&file=request_170900_2005334297_7298683_0012606090.xml
+
+http://zce-rktu-sys.zit.commerzbank.com:8080/Admin/deployWar.jsp

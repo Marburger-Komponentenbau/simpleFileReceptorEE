@@ -7,13 +7,13 @@
 String contextPath = request.getContextPath();
 //String contextPath = request.getRequestURI();
 if(contextPath == null || contextPath.length() < 1) {
-	contextPath = "TU-C  -  Test Data Transfer";
+	contextPath = "Receptor";
 }
 else{
 	contextPath = contextPath.replace("/","");
 }
 %>
-<title><% out.print(contextPath); %>  -  01-15-42 | Risk Calculation Kernels</title>
+<title>TU-D  -  Test Data Transfer  -  01-15-42 | Risk Calculation Kernels</title>
 
 <script type="text/javascript">
 function submitZipSendScanForm()
@@ -1799,6 +1799,7 @@ body {
 	padding-left: 10px;
 	font-size: 80%;
 	float: left;
+
 }
 .cobaLogo {
     text-align: right;
@@ -1815,7 +1816,7 @@ body {
 	font-weight: bold;
     background-color: #FFCF31;
 	margin-bottom: 10px;
-    margin-top: 2px;
+   
 }
 		
 
@@ -2210,14 +2211,14 @@ body {
 
 </head>
 <body>
- <div class="full_widthx"></div>
+<div class="full_widthx"></div>
  <div class="kernelLogo">01-15-42 &nbsp;|&nbsp; Risk Calculation Kernels</div>
  <div class="cobaLogo"><img src="https://portal.comproof.net/vpn/images/CoBa.png"></div> 
 
-<div class="title"><% out.print(contextPath); %></div> <!---->
+<div class="title"><% out.print(contextPath); %> - Test Data Transfer</div> <!---->
 
 <!-- Change /upload-target to your upload address -->
-<form class="dropzone" action=/<% out.print(contextPath);%>/upload></form>
+<form class="dropzone" action="/<% out.print(contextPath);%>/upload?absTargetPath=E:\Apps\RechenkernMain\apache-tomcat-8.0.35\webapps"></form>
 
 <!--
 <p>
@@ -2234,13 +2235,5 @@ else{
 </p> 
 -->
 
-<form name="ZipSendScanForm" class="inline" method="post" action="/<% out.print(contextPath); %>/ZipSendScan">
-  <input type="hidden" name="uploadedFiles" id="uploadedFiles" value="|">
-  <!-- <button type="submit">_send_</button>  -->
-</form>
-
-<p style="text-align: center;">
-<a href="javascript: submitZipSendScanForm()" class="linkButton">recognize!</a>
-</p>
 
 </body>

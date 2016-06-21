@@ -22,7 +22,7 @@ import javax.xml.transform.stream.StreamSource;
 /**
  * Servlet implementation class DownloadServlet
  */
-@WebServlet({ "/transform2" })
+@WebServlet({ "/transform" })
 public class DownloadTransformServlet extends AbstractServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -63,12 +63,29 @@ public class DownloadTransformServlet extends AbstractServlet {
 						  + "	indent=\"yes\""
 						  + "	media-type=\"text/plain\" />"
 						  + "  "
+						  
 						  + "<xsl:template match=\"/\">"
-						  + ""
+						  //+ "	<xsl:text>&lt;nav&gt;</xsl:text>"
 						  + "	<xsl:text>&lt;ul class=\"entities\"&gt;</xsl:text>"
-						  + "		<xsl:for-each select=\"*/SCAN:entities\">"
+						  + "	   <xsl:apply-templates select=\"SCAN:GetScoreResponse/SCAN:kernelStructureOutput/SCAN:entities\" />"
+						  + "	   <xsl:apply-templates select=\"SCAN:GetScoreRequest/SCAN:kernelStructureInput/SCAN:entities\" />"
+						  + "	<xsl:text>&lt;/ul&gt;</xsl:text>"
+						  
+						  //+ "	<xsl:text>&lt;/nav&gt;</xsl:text>"
+						  + "</xsl:template>"				  
+						  
+						  //onclick="display(display);"
+						  //onclick="clicked(document.getElementById('btnSwH5').parentElement.nextSibling, 0, 0, true);clicked(document.getElementById('dw__toc'), 1, 0, false);refreshState(0);"
+						  
+						  + "<xsl:template match=\"SCAN:entities\">"
+						  + ""
+						  //+ "		<xsl:for-each select=\"*//SCAN:entities\">"
+						  //+ "		<xsl:for-each select=\"SCAN:GetScoreResponse/SCAN:kernelStructureOutput/SCAN:entities\">" 
+						  //+ "		<xsl:for-each select=\"SCAN:GetScoreRequest/SCAN:kernelStructureInput/SCAN:entities\">"
 						  + "			 <xsl:text>&lt;li class=\"entity\"&gt;</xsl:text>"
-						  + "				<xsl:value-of select=\"SCAN:name\"/>"
+						  + "			    <xsl:text>&lt;a href=\"javascript:void(0)\" onclick=\"display(this);\" &gt;</xsl:text>"
+						  + "				   <xsl:value-of select=\"SCAN:name\"/>"
+						  + "			    <xsl:text>&lt;/a&gt;</xsl:text>"
 						  + "				<xsl:text>&lt;table class=\"values\"&gt;</xsl:text>"
 						  + "					<xsl:for-each select=\"SCAN:values\">"
 						  + "						<xsl:text>&lt;tr&gt;</xsl:text>"
@@ -81,9 +98,11 @@ public class DownloadTransformServlet extends AbstractServlet {
 						  + "						<xsl:text>&lt;/tr&gt;</xsl:text>"
 						  + "					</xsl:for-each>"
 						  + "				<xsl:text>&lt;/table&gt;</xsl:text>"
+						  + "	            <xsl:text>&lt;ul class=\"entities\"&gt;</xsl:text>"
+						  + "			       <xsl:apply-templates select=\"SCAN:entities\" />"
+						  + "	            <xsl:text>&lt;/ul&gt;</xsl:text>"
 						  + "			<xsl:text>&lt;/li&gt;</xsl:text>"
-						  + "		</xsl:for-each>"
-						  + "	<xsl:text>&lt;/ul&gt;</xsl:text>"
+						  //+ "		</xsl:for-each>"
 						  + ""
 						  + "</xsl:template>"
 						  + ""
