@@ -2,11 +2,12 @@
 	language="java" 
 	contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"
-    import="java.util.StringTokenizer" %>
+    import="java.util.StringTokenizer, java.util.Base64" 
+    %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <%
 String contextPath = request.getContextPath();
 //String contextPath = request.getRequestURI();
@@ -25,16 +26,19 @@ else{
 
 <script type="text/javascript">
 
-function loadXMLTransformed(folder, file, target) {
+function loadXMLTransformed(btn, file, target) {
     var xmlhttp;
 
     var node = document.getElementById(target);
+    var btnNode = document.getElementById(btn);
     if(node.childNodes != null && node.childNodes.length > 0 && node.firstChild.nodeType != 3){//
 		if(node.style.display !== 'none'){
 			node.style.display = 'none';
+			btnNode.style.opacity = 0.5;
 		}
 		else{
 			node.style.display = 'block';
+			btnNode.style.opacity = 1;
 		}
 		//alert(node.firstChild.nodeType);
 		return;
@@ -52,6 +56,7 @@ function loadXMLTransformed(folder, file, target) {
            //alert(xmlhttp.responseText);
     	   if(node.style.display !== 'block'){
   			  node.style.display = 'block';
+  			  btnNode.style.opacity = 1;
   		   }
            if(xmlhttp.status == 200){
         	   node.innerHTML = xmlhttp.responseText;
@@ -62,25 +67,25 @@ function loadXMLTransformed(folder, file, target) {
            }
         }
     };
-    xmlhttp.open("GET", "/<% out.print(contextPath); %>/transform?folder=".concat(folder).concat("&file=").concat(file).concat("&t=").concat( new Date().getTime() ), true);
+    xmlhttp.open("GET", "/<% out.print(contextPath); %>/transform?folder=xml&file=".concat(file).concat("&t=").concat( new Date().getTime() ), true);
     xmlhttp.send();
 }
 
-function display(node){
+function display(node, btnNode){
     if(node == null){
 		return;
 	}
 	//var disp = 'block';
 	//var deco = 'none';
-	if(node.style.fontWeight !== 'lighter'){
-	  node.style.fontWeight = 'lighter'; // "none|underline|overline|line-through|blink|initial|inherit" 
-	  node.style.opacity = 0.5;
+	if(btnNode.style.opacity != 0.5){
+	  //node.style.fontWeight = 'lighter'; // "none|underline|overline|line-through|blink|initial|inherit" 
+	  btnNode.style.opacity = 0.5;
 	  //disp = 'block';//none
 	  //deco = 'line-through';
 	}
 	else{
-	  node.style.fontWeight = 'bold';
-	  node.style.opacity = 1;
+	  //node.style.fontWeight = 'bold';
+	  btnNode.style.opacity = 1;
 	}
 	
 	var node = node.nextSibling;
@@ -188,16 +193,27 @@ body {
     color: #FFCF31;
 }
 
+div.Res {
+	font-size: 90%;
+}
+		
+a {
+    text-decoration: none;
+    color: black; 
+    font-weight: bold;
+}
+
 ul.ZipFilesList {
-    padding: 0px 0px 0px 12px;
-	margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 12px;
+	
 	/*list-style-position: inside;*/
 	border: 1px solid red; 
 }
 
 li.ZipFileListItem{
     padding: 0px 0px 0px 0px;
-	margin: 0px 0px 0px 0px;
+	margin: 3px 0px 0px 0px;
 	/*border: 1px solid black;*/ 
 }
 
@@ -211,7 +227,7 @@ ul.ImageFilesList {
     padding: 0px 0px 0px 12px;
 	margin: 0px 0px 0px 0px;
 	/*text-align: right;*/
-	
+	list-style-position: inside;
 	/*border: 1px solid red;*/ 
 }
 
@@ -227,11 +243,18 @@ li.ImageFileListItem a.ImageFileLink img {
     min-height: 750px;
 }
 
+		div.RecognitionResultAndLink, 
+		div.KernelResponseAndLink{
+    padding: 0px 0px 0px 0px;
+	margin: 3px 0px 12px 12px;
+	border: 1px solid black; 
+}
 
 
   <!-- 
 	div.ZipFile
 	 a
+	
 		
 
 margin-left: 35px;
@@ -296,9 +319,9 @@ else{
 		out.println( "<li class=\"ZipFileListItem\">" );
 		
 		out.println( "<div class=\"ZipFile\">Input: " );	
-		out.println( "<a href=\"javascript:void(0)\" onclick=\"display(this.parentNode);\">" + zipFilename + "</a>" );//
+		out.println( "<a href=\"javascript:void(0)\" onclick=\"display(this.parentNode, this);\">" + zipFilename + "</a>" );//
 		out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-		out.println( "<a href=\"/" + contextPath + "/download?folder=zip&file=" + zipFilename + "\">download" + "</a>" );//
+		out.println( "<a href=\"/" + contextPath + "/download64?folder=zip&file=" + new String( Base64.getEncoder().encode( zipFilename.getBytes() ) ) + "\">download" + "</a>" );//
 		out.println( "</div>" );
 		out.println( "<div id=\"Splitter" + Integer.toString(++splitterid) + "\" class=\"Splitter\">" );
 		out.println( "<div class=\"LeftPane\">" );	
@@ -314,20 +337,32 @@ else{
 			while ( stImg.hasMoreTokens() ){
 				String imgFilename = stImg.nextToken();	
 				String imgFilenameLowerCase = imgFilename.toLowerCase();
+				String imgFilename64 = new String( Base64.getEncoder().encode( imgFilename.getBytes() ) );
+								
 				//out.println( "<a href=\"/download?folder=zip&file=" + filename + "\"> a:" + filename + "</a><br/>" );//" + contextPath + "
 				out.println( "<li class=\"ImageFileListItem\">" );
 				
-				out.print( "<a href=\"javascript:void(0)\" onclick=\"display(this);\">" + imgFilename + "</a>" );//
+				out.print( "<a href=\"javascript:void(0)\" onclick=\"display(this,this);\">" + imgFilename + "</a>" );//
 				if(imgFilenameLowerCase.endsWith(".pdf")){
-					out.println( "<object data=\"/" + contextPath + "/download?folder=in&file=" + imgFilename + "\" type=\"application/pdf\">" );
-					out.print(  "alt : <a href=\"/" + contextPath + "/download?folder=in&file=" + imgFilename + "\" class=\"ImageFileLink\">" );//
+					//out.println( "<object data=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" type=\"application/pdf\">" );
+					out.print(  "<a href=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" class=\"ImageFileLink\">" );//
+					out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 					out.println( "download</a>" );//					
-					out.println( "</object>" );
+					out.println( "<embed src=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" alt=\"pdf\" pluginspage=\"http://www.adobe.com/products/acrobat/readstep2.html\" />" );
+					//out.println( "</object>" );
+					
+					/*
+					
+<iframe src="http://docs.google.com/gview?url=http://domain.com/pdf.pdf&embedded=true" 
+style="width:600px; height:500px;" frameborder="0"></iframe>					
+					
+					*/
+					
 				}
 				else{
-					out.println( "<a href=\"/" + contextPath + "/download?folder=in&file=" + imgFilename + "\" class=\"ImageFileLink\">" );//
+					out.println( "<a href=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" class=\"ImageFileLink\">" );//
 					out.println( imgFilename );//
-					out.println( "<img class=\"ImageFileImg\" src=\"/" + contextPath + "/download?folder=in&file=" + imgFilename + "\" alt=\"" + imgFilename + "\" />" );// style=\"width:304px;height:228px;\"
+					out.println( "<img class=\"ImageFileImg\" src=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" alt=\"" + imgFilename + "\" />" );// style=\"width:304px;height:228px;\"
 					out.println( "</a>" );//					
 				}
 				
@@ -343,20 +378,20 @@ else{
 		//out.println( "<a href=\"/" + contextPath + "/download?folder=res&file=response_" + zipFilename.replace(".zip", ".xml") + "\">RK-Response: response_" + zipFilename.replace(".zip", ".xml") + "</a>" );//
 		out.println(
 				     "<div class=\"RecognitionResultAndLink\">" + 
-					 "<a href=\"javascript:loadXMLTransformed('xml','" + requestXmlFilename +
+					 "<a href=\"javascript:loadXMLTransformed('RecognitionLink','" + requestXmlFilename +
 				     "','" + requestXmlFilename + "')\"" +
-		             " class=\"xmlLoadButton\">Recognition Result: " + requestXmlFilename + "</a>" +
+		             " class=\"xmlLoadButton\" id=\"RecognitionLink\">Recognition Result" + "</a>:&nbsp;" + requestXmlFilename  +
 				     "<div id=\"" + requestXmlFilename + "\" class=\"RecognitionResult\"></div>" +  
 				     "</div>" 
 		             
 				   );		
-		
+
 		String responseXmlFilename = "response_170900_2005334297_7298683_0012606090.xml";
 		out.println(
 				    "<div class=\"KernelResponseAndLink\">" + 
-		             "<a href=\"javascript:loadXMLTransformed('xml','" + responseXmlFilename +
+		             "<a href=\"javascript:loadXMLTransformed('KernelLink','" + responseXmlFilename +
 				     "','" + responseXmlFilename + "')\"" +
-		             " class=\"xmlLoadButton\">Rechenkern Response: " + responseXmlFilename + "</a>" +
+		             " class=\"xmlLoadButton\" id=\"KernelLink\">Rechenkern Response" + "</a>:&nbsp;" + responseXmlFilename +
 					 "<div id=\"" + responseXmlFilename + "\" class=\"KernelResponse\"></div>" + 
 				     "</div>" 
 		             

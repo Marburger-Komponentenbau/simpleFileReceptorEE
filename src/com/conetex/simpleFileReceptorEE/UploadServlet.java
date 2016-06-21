@@ -49,6 +49,8 @@ public class UploadServlet extends AbstractServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
@@ -56,7 +58,8 @@ public class UploadServlet extends AbstractServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
 		File folder = null; 
 				
 		String folderName = request.getParameter("absTargetPath");
@@ -84,8 +87,9 @@ public class UploadServlet extends AbstractServlet {
 		File outFile = null;
 	    for (Part filePart : fileParts) {
 	        fileName = filePart.getSubmittedFileName();
+	        Collection<String> hn = filePart.getHeaderNames();
 	        System.out.println(filePart.getContentType() + " - " + filePart.getName());
-	        System.out.println(fileName);
+	        System.out.println(folder.getAbsolutePath() + " - " + fileName);
 	        InputStream fileContent = filePart.getInputStream();
 	        if( folderName != null && !(folderName.length() < 3) ){
 	        	// OVERWRITE // TODO funktioniert irgendwie nicht ...

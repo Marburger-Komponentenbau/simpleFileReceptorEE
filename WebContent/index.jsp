@@ -2,7 +2,8 @@
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <head>
-<meta charset="utf-8">
+ <meta charset="utf-8"> 
+<!--<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">-->
 <%
 String contextPath = request.getContextPath();
 //String contextPath = request.getRequestURI();

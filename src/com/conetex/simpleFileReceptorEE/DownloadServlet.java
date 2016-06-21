@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Base64;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class DownloadServlet
  */
-@WebServlet({ "/download" })
+@WebServlet({ "/download","/download64" })
 public class DownloadServlet extends AbstractServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -30,8 +31,17 @@ public class DownloadServlet extends AbstractServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		
 		String folderName = request.getParameter("folder");
 		String fileName = request.getParameter("file");
+		// encode data on your side using BASE64
+		if( "/download64".equalsIgnoreCase( request.getServletPath() ) ){
+			//byte[] valueDecoded= Base64.decodeBase64(bytesEncoded );
+			//System.out.println("Decoded value is " + new String(valueDecoded));
+			fileName = new String( Base64.getDecoder().decode( fileName.getBytes() ) );
+		}
 		if(folderName == null || fileName == null){
 			response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
 			return;

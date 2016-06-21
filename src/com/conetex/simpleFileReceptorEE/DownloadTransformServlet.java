@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.util.Base64;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -83,7 +84,7 @@ public class DownloadTransformServlet extends AbstractServlet {
 						  //+ "		<xsl:for-each select=\"SCAN:GetScoreResponse/SCAN:kernelStructureOutput/SCAN:entities\">" 
 						  //+ "		<xsl:for-each select=\"SCAN:GetScoreRequest/SCAN:kernelStructureInput/SCAN:entities\">"
 						  + "			 <xsl:text>&lt;li class=\"entity\"&gt;</xsl:text>"
-						  + "			    <xsl:text>&lt;a href=\"javascript:void(0)\" onclick=\"display(this);\" &gt;</xsl:text>"
+						  + "			    <xsl:text>&lt;a href=\"javascript:void(0)\" onclick=\"display(this,this);\" &gt;</xsl:text>"
 						  + "				   <xsl:value-of select=\"SCAN:name\"/>"
 						  + "			    <xsl:text>&lt;/a&gt;</xsl:text>"
 						  + "				<xsl:text>&lt;table class=\"values\"&gt;</xsl:text>"
@@ -124,6 +125,14 @@ public class DownloadTransformServlet extends AbstractServlet {
 		}
 		
 		File file = new File(super.getResFolder(), fileName);
+		for(int i = 0; ! file.exists() && i < 5; i++){
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		if( ! file.exists() || ! file.canRead() ){
 			response.getWriter().println( file.getAbsolutePath() + " ist nicht vorhanden!" );
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
