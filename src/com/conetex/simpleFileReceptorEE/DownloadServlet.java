@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Base64;
+import javax.xml.bind.DatatypeConverter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -40,7 +40,8 @@ public class DownloadServlet extends AbstractServlet {
 		if( "/download64".equalsIgnoreCase( request.getServletPath() ) ){
 			//byte[] valueDecoded= Base64.decodeBase64(bytesEncoded );
 			//System.out.println("Decoded value is " + new String(valueDecoded));
-			fileName = new String( Base64.getDecoder().decode( fileName.getBytes() ) );
+			//fileName = new String( Base64.getDecoder().decode( fileName.getBytes() ) );
+			fileName = new String( DatatypeConverter.parseBase64Binary(fileName) );
 		}
 		if(folderName == null || fileName == null){
 			response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
@@ -52,7 +53,7 @@ public class DownloadServlet extends AbstractServlet {
 			folder = super.getDataFolder();
 		}
 		else if(folderName.equals("zip")){
-			folder = super.getZipFolder();
+			folder = super.getZipArchivFolder();
 		}
 		else if(folderName.equals("xml")){
 			folder = super.getResFolder();

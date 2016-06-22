@@ -1,5 +1,6 @@
 package com.conetex.simpleFileReceptorEE;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,6 +11,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Collection;
 
+import javax.imageio.ImageIO;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
+
 
 
 /**
@@ -44,6 +47,28 @@ public class UploadServlet extends AbstractServlet {
         super();
     }
 
+    private void convert(File file){
+    	if(file == null){
+    		return;
+    	}
+    	String fname = file.getName();
+    	String fnamel = fname.toLowerCase();
+    	if(fnamel.endsWith(".tif") || fnamel.endsWith(".tiff")){
+        	File outFile = super.getNewRenamedFile( this.getDataFolder(), fname + ".c.jpg" );
+        	BufferedImage image = null;
+    		try {
+    			image = ImageIO.read(file);
+    			
+    			ImageIO.write(image, "jpg", outFile);
+    			System.out.println(outFile.getAbsolutePath());
+    		} catch (IOException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}         	
+    	}
+    }
+    
+    
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -122,6 +147,7 @@ public class UploadServlet extends AbstractServlet {
 			}
 			out.flush();
 			out.close();
+			//convert(outFile);
 			return outFile;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

@@ -18,9 +18,14 @@ public abstract class AbstractServlet extends HttpServlet {
 	private static String defaultFolderName = "data//";
 	private static String defaultSubFolderName = "dft";
 	
+	// owner: Rechenkern
 	private String dataFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
 	private File dataFolder = null;
 
+	private String zipArchivFolderName = "E://Apps//RechenkernMain//fileReceptorEE//dataZip//";
+	private File zipArchivFolder = null;
+	
+	// owner: Captiva
 	private String zipFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
 	private File zipFolder = null;
 	
@@ -28,7 +33,7 @@ public abstract class AbstractServlet extends HttpServlet {
 	private File resultFolder = null;
 	
 	private String keySeparator = "_GHNW";//;
-	private String runIdSeparator = ".";
+	private static String runIdSeparator = ".";
 	
 	public String getRunIdSeparator() {
 		return runIdSeparator;
@@ -52,12 +57,24 @@ public abstract class AbstractServlet extends HttpServlet {
 		}
 		System.out.println("Properties found...");
 		this.dataFolderName = properties.getProperty("imageFolderParent", this.dataFolderName);
+		this.zipArchivFolderName = properties.getProperty("zipArchivFolderParent", this.zipArchivFolderName);
 		this.zipFolderName = properties.getProperty("zipFolderParent", this.zipFolderName);
 		this.resultFolderName = properties.getProperty("resultFolderParent", this.resultFolderName);
 		this.keySeparator = properties.getProperty("keySeparator", this.keySeparator);
-		this.runIdSeparator = properties.getProperty("runIdSeparator", this.runIdSeparator);
+		runIdSeparator = properties.getProperty("runIdSeparator", runIdSeparator);
     }
     
+	public File getZipArchivFolder() {
+		return getContextFolder(this.getParentFolderZipArchiv());
+	}	
+	
+	private File getParentFolderZipArchiv(){
+		if(this.zipArchivFolder == null){
+			this.zipArchivFolder = createFolder(this.zipArchivFolderName);
+		}
+		return this.zipArchivFolder;
+	}	
+	
 	public File getDataFolder(){
         return getContextFolder(this.getParentFolderData());
 	}
@@ -143,11 +160,32 @@ public abstract class AbstractServlet extends HttpServlet {
 		return file;
 	}	
 	
+	public static String getKeyOfFile(String fname) {
+
+			String fnameBegin = fname;
+			
+			int endIndex = fname.lastIndexOf(".");
+			if (endIndex != -1) {
+				fnameBegin = fname.substring(0, endIndex);
+			}
+
+			int endIndexDel = fname.lastIndexOf(runIdSeparator);
+			if (endIndexDel != -1) {
+				fnameBegin = fname.substring(0, endIndexDel);
+			}
+			
+			return fnameBegin;
+
+	}	
+	
+	
 	public File deleteFile(File folder, String fname) {
 		File file = new File(folder, fname);
 		file.deleteOnExit();
 		System.out.println("DEL: " + file.getAbsolutePath());
 		return file;
 	}
+
+
 	
 }

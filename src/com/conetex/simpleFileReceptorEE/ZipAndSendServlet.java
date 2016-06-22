@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -63,7 +64,7 @@ public class ZipAndSendServlet extends AbstractServlet {
 		StringTokenizer st = new StringTokenizer( files, "|" );		
 		
 		// tiffFiles zipFiles zuordnen
-		Map<String,Vector<File>> zipFiles2TiffFiles = new HashMap<String, Vector<File>> ();
+		Map<String, Map<String,File>> zipFiles2TiffFiles = new HashMap<String, Map<String,File>> ();
 		while ( st.hasMoreTokens() ){
 			String filename = st.nextToken();
 			File tiffFile = new File(super.getDataFolder(), filename);
@@ -79,13 +80,13 @@ public class ZipAndSendServlet extends AbstractServlet {
 			}
 			if( zipFiles2TiffFiles.containsKey( key ) )
 			{
-				Vector<File> tiffFiles = zipFiles2TiffFiles.get( key );
-				tiffFiles.add( tiffFile );
+				Map<String,File> tiffFiles = zipFiles2TiffFiles.get( key );
+				tiffFiles.put(tiffFile.getName(), tiffFile);
 			}
 			else{
-				Vector<File> tiffFiles = new Vector<File>();
+				Map<String,File> tiffFiles = new HashMap<String,File>();
 				zipFiles2TiffFiles.put( key, tiffFiles );
-				tiffFiles.add( tiffFile );
+				tiffFiles.put(tiffFile.getName(), tiffFile);
 			}				
 		    //response.getWriter().append( filename );
 		    //response.getWriter().append("<br>");
@@ -97,8 +98,9 @@ public class ZipAndSendServlet extends AbstractServlet {
 		while( keys.hasNext() )
 		{
 			String key = keys.next();			
-			File zipFile = super.getNewRenamedFile( this.getZipFolder(), zipFileName + key + ".zip.tmp" );
-			File zipFileFin = super.getNewRenamedFile( this.getZipFolder(), zipFileName + key + ".zip" );
+			File zipFile = super.getNewRenamedFile( this.getZipArchivFolder(), zipFileName + key + ".zip.tmp" );
+			File zipFileFin = super.getNewRenamedFile( this.getZipArchivFolder(), zipFileName + key + ".zip" );
+			File zipFileTarget = super.getNewRenamedFile( this.getZipFolder(), zipFileName + key + ".zip" );
 			if( zipFile.exists() )
 			{
 				System.out.println( "Zip file: " + zipFile.getAbsolutePath() + " exists" );
@@ -109,8 +111,8 @@ public class ZipAndSendServlet extends AbstractServlet {
 	    	System.out.println( "Create Zip file: "+ zipFile.getAbsolutePath() );
 	    	String zippedFiles = "";
 	    	byte[] buffer = new byte[1024];
-			Vector<File> sub = zipFiles2TiffFiles.get( key );
-			for( File tiffFile : sub )
+	    	Map<String,File> sub = zipFiles2TiffFiles.get( key );
+			for( File tiffFile : sub.values() )
 			{
 				System.out.println( "Add Zip entry: "+ tiffFile.getName() );
 				ZipEntry entry = new ZipEntry( tiffFile.getName() );
@@ -133,6 +135,9 @@ public class ZipAndSendServlet extends AbstractServlet {
 				continue;
 			}			
 			zipFile.renameTo(zipFileFin);
+			
+			//move to target (Captiva)
+			Files.copy(zipFileFin.toPath(), zipFileTarget.toPath());
 			
 			createdZips = createdZips + zipFileFin.getName() + "|";
 			request.setAttribute(zipFileFin.getName(), zippedFiles);

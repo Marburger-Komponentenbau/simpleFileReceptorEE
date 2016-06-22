@@ -15,8 +15,10 @@
   
 
 <xsl:template match="/">
+	<xsl:text>&lt;nav&gt;</xsl:text>
      <xsl:apply-templates select="SCAN:GetScoreResponse/SCAN:kernelStructureOutput/SCAN:entities" />
      <xsl:apply-templates select="SCAN:GetScoreRequest/SCAN:kernelStructureInput/SCAN:entities" />
+    <xsl:text>&lt;/nav&gt;</xsl:text>
 </xsl:template>
 <!-- 
 <xsl:for-each select="/SCAN:entities"></xsl:for-each>
@@ -25,7 +27,9 @@
 <xsl:template match="SCAN:entities">
 	<xsl:text>&lt;ul class="entities"&gt;</xsl:text>
 		 <xsl:text>&lt;li class="entity"&gt;</xsl:text>
-			<xsl:value-of select="SCAN:name"/>
+		    <xsl:text>&lt;a href="javascript:void(0)" onclick="display(this);" &gt;</xsl:text>
+			   <xsl:value-of select="SCAN:name"/>
+			<xsl:text>&lt;/a&gt;</xsl:text>
 			<xsl:text>&lt;table class="values"&gt;</xsl:text>
 				<xsl:for-each select="SCAN:values">
 					<xsl:text>&lt;tr&gt;</xsl:text>
