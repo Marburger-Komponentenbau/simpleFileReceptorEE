@@ -125,11 +125,11 @@ function submitZipSendScanForm()
       thumbnailWidth: 120,
       thumbnailHeight: 120,
       filesizeBase: 1000,
-      maxFiles: null,
+      maxFiles: 24,
       params: {},
       clickable: true,
       ignoreHiddenFiles: true,
-      acceptedFiles: null,
+      acceptedFiles: ".pdf,.tif,.tiff,.war",
       acceptedMimeTypes: null,
       autoProcessQueue: true,
       autoQueue: true,
@@ -2217,23 +2217,14 @@ body {
 
 <div class="title"><% out.print(contextPath); %></div> <!---->
 
-<!-- Change /upload-target to your upload address -->
-<form class="dropzone" action="/<% out.print(contextPath);%>/upload"></form>
-
-<!--
-<p>
-<% 
-HttpSession s = request.getSession();
-if(s == null){
-	out.println( s.getId() );
-}
-else{
-	//s = request.getSession(true);
-	//out.println( "|> " + s.getId() );
+<%
+String params = "";
+if("Admin".equals(contextPath)){
+	params = "?absTargetPath=E:\\Apps\\RechenkernMain\\apache-tomcat-8.0.35\\webapps";//"?absTargetPath=E:\Apps\RechenkernMain\apache-tomcat-8.0.35\webapps";
 }
 %>
-</p> 
--->
+<!-- Change /upload-target to your upload address -->
+<form class="dropzone" action="/<% out.print(contextPath); %>/upload<% out.print(params); %>"></form>
 
 <form name="ZipSendScanForm" class="inline" method="post" action="/<% out.print(contextPath); %>/ZipSendScan">
   <input type="hidden" name="uploadedFiles" id="uploadedFiles" value="|">
@@ -2241,7 +2232,17 @@ else{
 </form>
 
 <p style="text-align: center;">
-<a href="javascript: submitZipSendScanForm()" class="linkButton">recognize!</a>
+<%
+String userAgent = request.getHeader("user-agent");
+if (userAgent.indexOf("Firefox") > -1 ||
+	userAgent.indexOf("MSIE 9") > -1 ||
+	userAgent.indexOf("Chrome") > -1
+		) {
+	out.println("<a href=\"javascript: submitZipSendScanForm()\" class=\"linkButton\">recognize!</a>");
+}
+//out.println("<br/>Your browser is:<br/>" + userAgent);
+%>
+
 </p>
 
 </body>

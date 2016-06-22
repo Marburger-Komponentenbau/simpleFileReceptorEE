@@ -32,16 +32,18 @@ function loadXMLTransformed(btn, file, target) {
 
     var node = document.getElementById(target);
     var btnNode = document.getElementById(btn);
-    if(node.childNodes != null && node.childNodes.length > 0 && node.firstChild.nodeType != 3){//
-		if(node.style.display !== 'none'){
-			node.style.display = 'none';
-			btnNode.style.opacity = 0.5;
-		}
-		else{
-			node.style.display = 'block';
-			btnNode.style.opacity = 1;
-		}
-		//alert(node.firstChild.nodeType);
+    if(node.childNodes != null && node.childNodes.length > 0 && node.firstChild.className !== "msg" ){//
+    	if(node.firstChild.className !== "status"){
+			if(node.style.display !== 'none'){
+				node.style.display = 'none';
+				btnNode.style.opacity = 0.5;
+			}
+			else{
+				node.style.display = 'block';
+				btnNode.style.opacity = 1;
+			}
+    	}
+        //alert(node.firstChild.nodeType);
 		return;
     }
     if (window.XMLHttpRequest) {
@@ -51,7 +53,7 @@ function loadXMLTransformed(btn, file, target) {
         // code for IE6, IE5
         xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
     }
-    node.innerHTML = "<p>loading ...</p>";
+    node.innerHTML = "<p class=\"status\">loading ...</p>";
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
            //alert(xmlhttp.responseText);
@@ -64,7 +66,7 @@ function loadXMLTransformed(btn, file, target) {
            }
            else {
               //alert("mein error: ".concat(xmlhttp.status));
-              node.innerHTML = "bin noch nicht so weit! versuchen Sie es gleich nochmal...";
+              node.innerHTML = "<p class=\"msg\">bin noch nicht so weit! <br/>versuchen Sie es bitte gleich nochmal...</p>";
            }
         }
     };
@@ -284,6 +286,12 @@ a.ZipFileLink {
     font-size: 90%;
     font-weight: normal;
 }
+
+.msg, .status {
+text-align: center;
+color: red; 
+}
+
   <!-- 
 	div.ZipFile
 	 a
@@ -328,13 +336,21 @@ ul.ZipFilesList
 int splitterid = 0;
 Object zipFilenamesObj = request.getAttribute("createdZips");
 if(zipFilenamesObj == null){
-	out.println( "???" );
+	out.println( 
+	"<p class=\"msg\">" +
+	"invalider Aufruf ..."+
+	"</p>" +
+	
+	"<p style=\"text-align: center;\">" +
+	"<a href=\"./\" class=\"linkButton\">back</a>" +
+	"</p>" 
+	);
 }
 else{
 	String zipFilenames = zipFilenamesObj.toString();
 	if(zipFilenames.length() < 2){
 		out.println( 
-		"<p style=\"text-align: center;\">" +
+		"<p class=\"msg\">" +
 		"keine Daten verarbeitet ..."+
 		"</p>" +
 		
@@ -348,11 +364,12 @@ else{
 	out.println( "<ul class=\"ZipFilesList\">" );
 	while ( st.hasMoreTokens() ){
 		String zipFilename = st.nextToken();	
+		String caseKey = AbstractServlet.getKeyOfFile(zipFilename);
 		//out.println( "<a href=\"/download?folder=zip&file=" + filename + "\"> a:" + filename + "</a><br/>" );//" + contextPath + "
 		out.println( "<li class=\"ZipFileListItem\">" );
 		
-		out.println( "<div class=\"ZipFile\">Input: " );	
-		out.println( "<a href=\"javascript:void(0)\" onclick=\"display(this.parentNode, this);\">" + zipFilename + "</a>" );//
+		out.println( "<div class=\"ZipFile\">" );	
+		out.println( "<a href=\"javascript:void(0)\" onclick=\"display(this.parentNode, this);\">" + caseKey + "</a>" );//
 		out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 		out.println( "<a href=\"/" + contextPath + "/download64?folder=zip&file=" + new String( DatatypeConverter.printBase64Binary( zipFilename.getBytes() ) ) + "\" class=\"ZipFileLink\">download" + "</a>" );//
 		out.println( "</div>" );
@@ -379,8 +396,8 @@ else{
 				if(imgFilenameLowerCase.endsWith(".pdf")){
 
 					out.print(  "<a href=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" class=\"ImageFileLink\" download>" );//
-					//out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-					//out.println( "download" );//					
+					out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+					out.println( "download" );//					
 					out.println( "</a>" );//					
 
 					//out.println( "<object data=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" type=\"application/x-msoffice14\">" );
@@ -429,9 +446,8 @@ style="width:600px; height:500px;" frameborder="0"></iframe>
 		
 		out.println( "<div class=\"RightPane\">" );
 		
-		//String requestXmlFilename = "request_170900_2005334297_7298683_0012606090.xml";//response_" + zipFilename.replace(".zip", ".xml")
-		//String requestXmlFilename = "request_" + zipFilename.replace(".zip", ".xml");
-		String requestXmlFilename = "request_" + AbstractServlet.getKeyOfFile(zipFilename) + ".xml";
+		String requestXmlFilename = "request_170900_2005334297_7298683_0012606090.xml";//String requestXmlFilename = "request_" + zipFilename.replace(".zip", ".xml");
+		//String requestXmlFilename = "request_" + caseKey + ".xml";
 		
 		//out.println( "<a href=\"/" + contextPath + "/download?folder=res&file=response_" + zipFilename.replace(".zip", ".xml") + "\">RK-Response: response_" + zipFilename.replace(".zip", ".xml") + "</a>" );//
 		out.println(
@@ -444,8 +460,8 @@ style="width:600px; height:500px;" frameborder="0"></iframe>
 		             
 				   );		
 
-		//String responseXmlFilename = "response_170900_2005334297_7298683_0012606090.xml";
-		String responseXmlFilename = "response_" + AbstractServlet.getKeyOfFile(zipFilename) + ".xml";
+		String responseXmlFilename = "response_170900_2005334297_7298683_0012606090.xml";
+		//String responseXmlFilename = "response_" + caseKey + ".xml";
 		out.println(
 				    "<div class=\"KernelResponseAndLink\">" + 
 		             "<a href=\"javascript:loadXMLTransformed('KernelLink','" + responseXmlFilename +

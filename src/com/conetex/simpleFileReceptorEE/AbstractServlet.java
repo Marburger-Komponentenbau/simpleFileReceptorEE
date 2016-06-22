@@ -160,21 +160,22 @@ public abstract class AbstractServlet extends HttpServlet {
 		return file;
 	}	
 	
-	public static String getKeyOfFile(String fname) {
+	public static String getKeyOfFile(String fnameOrg) {
 
-			String fnameBegin = fname;
+			String fname = fnameOrg;
 			
 			int endIndex = fname.lastIndexOf(".");
-			if (endIndex != -1) {
-				fnameBegin = fname.substring(0, endIndex);
+			if (endIndex > 1) {// -1: kein treffer, 0: treffer ganz links also kein key
+				               // 1: kein Platz fur keyseparator
+				fname = fname.substring(0, endIndex);
 			}
 
 			int endIndexDel = fname.lastIndexOf(runIdSeparator);
-			if (endIndexDel != -1) {
-				fnameBegin = fname.substring(0, endIndexDel);
+			if (endIndexDel > 0) {// -1: kein treffer, 0: treffer ganz links also kein key
+				fname = fname.substring(0, endIndexDel);
 			}
 			
-			return fnameBegin;
+			return fname;
 
 	}	
 	

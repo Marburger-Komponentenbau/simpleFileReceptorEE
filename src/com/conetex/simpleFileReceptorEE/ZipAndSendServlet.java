@@ -72,9 +72,9 @@ public class ZipAndSendServlet extends AbstractServlet {
 				continue;
 			}
 			// tiffFile vorhanden...
-			String key = filename;
+			String key = AbstractServlet.getKeyOfFile(filename);
 		    int idx = filename.indexOf( super.getKeySeparator() );
-			if( idx != -1 )
+			if( idx > 0 ) 
 			{
 				key = filename.substring( 0, idx );
 			}
@@ -98,9 +98,14 @@ public class ZipAndSendServlet extends AbstractServlet {
 		while( keys.hasNext() )
 		{
 			String key = keys.next();			
-			File zipFile = super.getNewRenamedFile( this.getZipArchivFolder(), zipFileName + key + ".zip.tmp" );
-			File zipFileFin = super.getNewRenamedFile( this.getZipArchivFolder(), zipFileName + key + ".zip" );
-			File zipFileTarget = super.getNewRenamedFile( this.getZipFolder(), zipFileName + key + ".zip" );
+			File zipFile = super.getNewRenamedFile( this.getZipArchivFolder(), key + ".zip.tmp" );
+			File zipFileTarget = null;
+			if(this.getZipArchivFolder().equals(this.getZipFolder())){
+				zipFileTarget = super.getNewRenamedFile( this.getZipFolder(), "t_" + key + ".zip" );
+			}
+			else{
+				zipFileTarget = super.getNewRenamedFile( this.getZipFolder(), key + ".zip" );
+			}
 			if( zipFile.exists() )
 			{
 				System.out.println( "Zip file: " + zipFile.getAbsolutePath() + " exists" );
@@ -110,7 +115,7 @@ public class ZipAndSendServlet extends AbstractServlet {
 	    	ZipOutputStream zos = new ZipOutputStream( fos );
 	    	System.out.println( "Create Zip file: "+ zipFile.getAbsolutePath() );
 	    	String zippedFiles = "";
-	    	byte[] buffer = new byte[1024];
+	    	byte[] buffer = new byte[16384];
 	    	Map<String,File> sub = zipFiles2TiffFiles.get( key );
 			for( File tiffFile : sub.values() )
 			{
@@ -129,6 +134,7 @@ public class ZipAndSendServlet extends AbstractServlet {
 			}
 			zos.closeEntry();
 			zos.close();
+			File zipFileFin = super.getNewRenamedFile( this.getZipArchivFolder(), key + ".zip" );
 			if( zipFileFin.exists() )
 			{
 				System.out.println( "Zip file: " + zipFileFin.getAbsolutePath() + " exists" );

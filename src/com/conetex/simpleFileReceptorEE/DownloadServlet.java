@@ -63,7 +63,7 @@ public class DownloadServlet extends AbstractServlet {
 			return;			
 		}
 		
-		String typ = "";
+		String typ = "text/plain";
 		String fileNameLowerCase = fileName.toLowerCase();
 		if(fileNameLowerCase.endsWith(".xml")){
 			typ = "text/xml";
@@ -81,8 +81,8 @@ public class DownloadServlet extends AbstractServlet {
 			typ = "application/gzip";
 		}		 
 		else{
-			response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
-			return;			
+			//response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
+			//return;			
 		}
 		 
 		File file = new File(folder, fileName);
@@ -103,7 +103,7 @@ public class DownloadServlet extends AbstractServlet {
 	
 		OutputStream out = response.getOutputStream();
 		FileInputStream in = new FileInputStream(file);
-		byte[] buffer = new byte[4096];
+		byte[] buffer = new byte[65536];
 		int length;
 		while ((length = in.read(buffer)) > 0){
 		    out.write(buffer, 0, length);

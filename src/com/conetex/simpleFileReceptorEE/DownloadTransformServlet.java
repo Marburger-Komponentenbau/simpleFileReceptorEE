@@ -124,9 +124,9 @@ public class DownloadTransformServlet extends AbstractServlet {
 		}
 		
 		File file = new File(super.getResFolder(), fileName);
-		for(int i = 0; ! file.exists() && i < 5; i++){
+		for(int i = 0; ! file.exists() && i < 7; i++){
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(1500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
