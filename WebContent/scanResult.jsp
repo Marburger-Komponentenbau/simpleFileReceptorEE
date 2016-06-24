@@ -2,7 +2,7 @@
 	language="java" 
 	contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"
-    import="java.util.StringTokenizer, javax.xml.bind.DatatypeConverter, com.conetex.simpleFileReceptorEE.AbstractServlet" 
+    import="java.util.StringTokenizer, java.io.File, javax.xml.bind.DatatypeConverter, com.conetex.simpleFileReceptorEE.StaticUtils" 
     %>
 <!-- <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">   -->
 <!DOCTYPE html>
@@ -117,7 +117,7 @@ function display(node, btnNode){
 
 </script>
 
-    <style>
+<style>
 
 .Splitter {
     min-width: 770px;
@@ -169,18 +169,38 @@ body {
 	float: clear;
     
 }
-.title {
-	text-align: left;
-	padding-left: 10px;
-	padding-right: 10px;
-	font-size: 133%;
-	font-weight: bold;
-    background-color: #FFCF31;
-	margin-bottom: 2px;
-    margin-top: 2px;
-    color: black;
+#title {
+	background-color: #FFCF31;
+    padding: 0px 0px 10px 0px;
+	margin: 2px 0px 4px 0px;	
 }
 
+.title {
+	text-align: left;
+    padding: 0px 0px 0px 10px;
+	margin: 0px 0px 0px 0px;	
+    color: black;
+	font-size: 133%;
+	font-weight: bold;
+	float: left;
+}
+
+.nav {
+    padding: 0px 10px 0px 0px;
+	margin: 0px 0px 0px 0px;
+    text-align: right;
+    
+    float: clear;
+}
+
+.nav a{
+    text-decoration: none;
+    color: black; 
+    font-size: 81%;
+    font-weight: normal;
+}
+
+/*
 .linkButton:link, .linkButton:visited {
     background-color: #FFCF31;
     color: black;
@@ -196,6 +216,7 @@ body {
     background-color: black;
     color: #FFCF31;
 }
+*/
 
 div.Res {
 	font-size: 90%;
@@ -318,16 +339,18 @@ ul.ZipFilesList
 -->
 
 
-    </style>
+</style>
 
 </head>
 <body>
  
- <div class="full_widthx"></div>
- <div class="kernelLogo">01-15-42 &nbsp;|&nbsp; Risk Calculation Kernels</div>
- <div class="cobaLogo"><img src="https://portal.comproof.net/vpn/images/CoBa.png"></div> 
-
- <div class="title"><% out.print(contextPath); %></div> <!---->
+<div class="full_widthx"></div>
+<div class="kernelLogo">01-15-42&nbsp;|&nbsp;Risk Calculation Kernels</div>
+<div class="cobaLogo"><img src="https://portal.comproof.net/vpn/images/CoBa.png"></div> 
+<div id="title">
+<div class="title"><% out.print(contextPath); %></div> 
+<div class="nav"><a href="./">documents</a>&nbsp;|&nbsp;<a href="upload.jsp">upload</a></div>
+</div>
 
 
 
@@ -339,11 +362,11 @@ if(zipFilenamesObj == null){
 	out.println( 
 	"<p class=\"msg\">" +
 	"invalider Aufruf ..."+
-	"</p>" +
-	
-	"<p style=\"text-align: center;\">" +
-	"<a href=\"./\" class=\"linkButton\">back</a>" +
-	"</p>" 
+	"</p>"
+//	+
+//	"<p style=\"text-align: center;\">" +
+//	"<a href=\"./\" class=\"linkButton\">back</a>" +
+//	"</p>" 
 	);
 }
 else{
@@ -352,19 +375,16 @@ else{
 		out.println( 
 		"<p class=\"msg\">" +
 		"keine Daten verarbeitet ..."+
-		"</p>" +
-		
-		"<p style=\"text-align: center;\">" +
-		"<a href=\"./\" class=\"linkButton\">back</a>" +
 		"</p>" 
 		);
 	}
 	//out.println( zipFiles );
 	StringTokenizer st = new StringTokenizer( zipFilenames, "|" );		
 	out.println( "<ul class=\"ZipFilesList\">" );
+	StaticUtils helper = StaticUtils.getInstance();
 	while ( st.hasMoreTokens() ){
 		String zipFilename = st.nextToken();	
-		String caseKey = AbstractServlet.getKeyOfFile(zipFilename);
+		String caseKey = helper.getKeyOfFile(zipFilename);
 		//out.println( "<a href=\"/download?folder=zip&file=" + filename + "\"> a:" + filename + "</a><br/>" );//" + contextPath + "
 		out.println( "<li class=\"ZipFileListItem\">" );
 		
@@ -387,31 +407,31 @@ else{
 			while ( stImg.hasMoreTokens() ){
 				String imgFilename = stImg.nextToken();	
 				String imgFilenameLowerCase = imgFilename.toLowerCase();
-				String imgFilename64 = new String( DatatypeConverter.printBase64Binary( imgFilename.getBytes() ) );
 								
 				//out.println( "<a href=\"/download?folder=zip&file=" + filename + "\"> a:" + filename + "</a><br/>" );//" + contextPath + "
-				out.println( "<li class=\"ImageFileListItem\">" );
-				
-				out.print( "<a href=\"javascript:void(0)\" onclick=\"display(this.nextSibling.nextSibling,this);\">" + imgFilename + "</a>" );//
 				if(imgFilenameLowerCase.endsWith(".pdf")){
+					String imgFilename64 = new String( DatatypeConverter.printBase64Binary( imgFilename.getBytes() ) );
 
-					out.print(  "<a href=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" class=\"ImageFileLink\" download>" );//
-					out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-					out.println( "download" );//					
-					out.println( "</a>" );//					
-
-					//out.println( "<object data=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" type=\"application/x-msoffice14\">" );
-					//out.println( "</object>" );
-
-					out.println( "<object data=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" type=\"application/pdf\">" );
-					out.println( "</object>" );
+					out.println( "<li class=\"ImageFileListItem\">" );
+					out.print( "<a href=\"javascript:void(0)\" onclick=\"display(this.nextSibling.nextSibling,this);\">" + imgFilename + "</a>" );//
 					
-					//out.println( "<embed src=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" alt=\"pdf\" pluginspage=\"http://www.adobe.com/products/acrobat/readstep2.html\" />" );
-					//out.println( "<embed src=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" type=\"application/pdf\" >" );
-					 
-					//out.println( "<div><iframe style=\"float:none;display:inline;height:300px;\" src=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" frameborder=\"0\"></iframe><br></div>" );
+						out.print(  "<a href=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" class=\"ImageFileLink\" target=\"_blank\" download>" );//
+						out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+						out.println( "download" );//					
+						out.println( "</a>" );//					
+	
+						//out.println( "<object data=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" type=\"application/x-msoffice14\">" );
+						//out.println( "</object>" );
+	
+						out.println( "<object data=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" type=\"application/pdf\">" );
+						out.println( "</object>" );
+						
+						//out.println( "<embed src=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" alt=\"pdf\" pluginspage=\"http://www.adobe.com/products/acrobat/readstep2.html\" />" );
+						//out.println( "<embed src=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" type=\"application/pdf\" >" );
+						 
+						//out.println( "<div><iframe style=\"float:none;display:inline;height:300px;\" src=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" frameborder=\"0\"></iframe><br></div>" );
 					
-					
+					out.println( "</li>" );
 					
 					/*
 					
@@ -422,23 +442,72 @@ style="width:600px; height:500px;" frameborder="0"></iframe>
 					
 				}
 				else{
-					out.println( "<a href=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" class=\"ImageFileLink\" download>" );//
-					//out.println( imgFilename );//
-					out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");					
-					out.println( "download" );//
-					out.println( "</a>" );//					
-					out.println( "<img class=\"ImageFileImg\" src=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" alt=\"no plugin for this image" + "\" >" );// style=\"width:304px;height:228px;\"
 					
-					//out.println( "<img src=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\">" );// style=\"width:304px;height:228px;\"
-					//out.println( "<img src=\"/" + contextPath + "/B.TIF\" />" );// style=\"width:304px;height:228px;\"
-					//out.println( "<img src=\"/" + contextPath + "/A.jpg\" />" );// style=\"width:304px;height:228px;\"
+					File[] jpgFiles = null;
 					
-					//out.println( "<object data=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" type=\"application/tiff\">" );
-					//out.println( "</object>" );					
+					if( (imgFilenameLowerCase.endsWith(".tif") || imgFilenameLowerCase.endsWith(".tiff")) &&
+						 ( jpgFiles = helper.getFiles(imgFilename, contextPath) ).length > 0
+						){
+						for(File f : jpgFiles){
+							System.out.println(f.getAbsolutePath());
+							
+							imgFilename = f.getName();	
+							String imgFilename64 = new String( DatatypeConverter.printBase64Binary( imgFilename.getBytes() ) );
+							String imgFolderParam = "inCon";
+							
+							out.println( "<li class=\"ImageFileListItem\">" );
+							out.print( "<a href=\"javascript:void(0)\" onclick=\"display(this.nextSibling.nextSibling,this);\">" + imgFilename + "</a>" );//
+							
+								out.println( "<a href=\"/" + contextPath + "/download64?folder=" + imgFolderParam + "&file=" + imgFilename64 + "\" class=\"ImageFileLink\" target=\"_blank\" download>" );//
+								//out.println( imgFilename );//
+								out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");					
+								out.println( "download" );//
+								out.println( "</a>" );//					
+								out.println( "<img class=\"ImageFileImg\" src=\"/" + contextPath + "/download64?folder=" + imgFolderParam + "&file=" + imgFilename64 + "\" alt=\"no plugin for this image" + "\" >" );// style=\"width:304px;height:228px;\"
+								
+								//out.println( "<img src=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\">" );// style=\"width:304px;height:228px;\"
+								//out.println( "<img src=\"/" + contextPath + "/B.TIF\" />" );// style=\"width:304px;height:228px;\"
+								//out.println( "<img src=\"/" + contextPath + "/A.jpg\" />" );// style=\"width:304px;height:228px;\"
+								
+								//out.println( "<object data=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" type=\"application/tiff\">" );
+								//out.println( "</object>" );						
+							
+							out.println( "</li>" );							
+							
+						}
+					}
+					else{
+						String imgFilename64 = new String( DatatypeConverter.printBase64Binary( imgFilename.getBytes() ) );
+						String imgFolderParam = "in";
+						
+						out.println( "<li class=\"ImageFileListItem\">" );
+						out.print( "<a href=\"javascript:void(0)\" onclick=\"display(this.nextSibling.nextSibling,this);\">" + imgFilename + "</a>" );//
+						
+							out.println( "<a href=\"/" + contextPath + "/download64?folder=" + imgFolderParam + "&file=" + imgFilename64 + "\" class=\"ImageFileLink\" target=\"_blank\" download>" );//
+							//out.println( imgFilename );//
+							out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");					
+							out.println( "download" );//
+							out.println( "</a>" );//					
+							out.println( "<img class=\"ImageFileImg\" src=\"/" + contextPath + "/download64?folder=" + imgFolderParam + "&file=" + imgFilename64 + "\" alt=\"no plugin for this image" + "\" >" );// style=\"width:304px;height:228px;\"
+							
+							//out.println( "<img src=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\">" );// style=\"width:304px;height:228px;\"
+							//out.println( "<img src=\"/" + contextPath + "/B.TIF\" />" );// style=\"width:304px;height:228px;\"
+							//out.println( "<img src=\"/" + contextPath + "/A.jpg\" />" );// style=\"width:304px;height:228px;\"
+							
+							//out.println( "<object data=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" type=\"application/tiff\">" );
+							//out.println( "</object>" );						
+						
+						out.println( "</li>" );
+						
+					}
+
+
+					
+					
 					
 				}
 				
-				out.println( "</li>" );
+				
 			}
 			out.println( "</ul>" );
 		}		
@@ -446,8 +515,8 @@ style="width:600px; height:500px;" frameborder="0"></iframe>
 		
 		out.println( "<div class=\"RightPane\">" );
 		
-		String requestXmlFilename = "request_170900_2005334297_7298683_0012606090.xml";//String requestXmlFilename = "request_" + zipFilename.replace(".zip", ".xml");
-		//String requestXmlFilename = "request_" + caseKey + ".xml";
+		//String requestXmlFilename = "request_170900_2005334297_7298683_0012606090.xml";//String requestXmlFilename = "request_" + zipFilename.replace(".zip", ".xml");
+		String requestXmlFilename = "request_" + caseKey + ".xml";
 		
 		//out.println( "<a href=\"/" + contextPath + "/download?folder=res&file=response_" + zipFilename.replace(".zip", ".xml") + "\">RK-Response: response_" + zipFilename.replace(".zip", ".xml") + "</a>" );//
 		out.println(
@@ -460,8 +529,8 @@ style="width:600px; height:500px;" frameborder="0"></iframe>
 		             
 				   );		
 
-		String responseXmlFilename = "response_170900_2005334297_7298683_0012606090.xml";
-		//String responseXmlFilename = "response_" + caseKey + ".xml";
+		//String responseXmlFilename = "response_170900_2005334297_7298683_0012606090.xml";
+		String responseXmlFilename = "response_" + caseKey + ".xml";
 		out.println(
 				    "<div class=\"KernelResponseAndLink\">" + 
 		             "<a href=\"javascript:loadXMLTransformed('KernelLink','" + responseXmlFilename +

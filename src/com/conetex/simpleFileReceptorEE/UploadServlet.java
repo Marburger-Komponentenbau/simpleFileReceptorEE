@@ -1,19 +1,16 @@
 package com.conetex.simpleFileReceptorEE;
 
-import java.awt.image.BufferedImage;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
+
 import java.util.Collection;
 
-import javax.imageio.ImageIO;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -29,7 +26,7 @@ import javax.servlet.http.Part;
  */
 @WebServlet("/upload")
 @MultipartConfig
-public class UploadServlet extends AbstractServlet {    
+public class UploadServlet extends HttpServlet {    
 	
 	private static final long serialVersionUID = 1L;
 
@@ -47,14 +44,47 @@ public class UploadServlet extends AbstractServlet {
         super();
     }
 
-    private void convert(File file){
-    	if(file == null){
+    public static void main(String[] a){
+    	convert(new File("C:\\dev\\Projekte\\EclipseEE_WS\\simpleFileReceptorEE\\test.TIF"), StaticUtils.getInstance());
+    }
+    
+    private static void convert(File file, StaticUtils helper){
+    	
+    	String i_view_Path = helper.getI_view_Path(); 
+    	if(i_view_Path.length() < 3 || file == null || 
+    	   (
+    		! file.getName().toLowerCase().endsWith(".tif")
+    		&&
+    		! file.getName().toLowerCase().endsWith(".tiff")
+    	   )
+    	  ){
     		return;
     	}
+    	
+/*
+set iviewpath=E:\Install\IrfanView
+set target=target_dir_jpg
+FOR %%t in (*.tif) DO "%iviewpath%\i_view32.exe" "%%t" /extract=(%target%,jpg) /killmesoftly
+*/
+		int re = new ProcessWithTimeout(
+				new ProcessBuilder(
+					i_view_Path,
+					file.getAbsolutePath(),
+					"/extract=(" + helper.getImageSubFolderJpg() + ",jpg)",
+					"/killmesoftly"
+				)
+			).waitForProcess(5000);
+			
+		System.out.println("convert " + file.getAbsolutePath() + " returns " + re);
+    	
+    	//C:\dev\Programme\IrfanView
+    	/*
+    	StaticUtils helper = StaticUtils.getInstance();
+    	
     	String fname = file.getName();
     	String fnamel = fname.toLowerCase();
     	if(fnamel.endsWith(".tif") || fnamel.endsWith(".tiff")){
-        	File outFile = super.getNewRenamedFile( this.getDataFolder(), fname + ".c.jpg" );
+        	File outFile = helper.getNewRenamedFile( helper.getDataFolder(this.getServletContext().getContextPath()), fname + ".c.jpg" );
         	BufferedImage image = null;
     		try {
     			image = ImageIO.read(file);
@@ -66,6 +96,7 @@ public class UploadServlet extends AbstractServlet {
     			e.printStackTrace();
     		}         	
     	}
+    	*/
     }
     
     
@@ -85,26 +116,27 @@ public class UploadServlet extends AbstractServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
+		StaticUtils helper = StaticUtils.getInstance();
+		String context = this.getServletContext().getContextPath();
 		File folder = null; 
-				
 		String folderName = request.getParameter("absTargetPath");
 		if(folderName == null || folderName.length() < 3){
-			folder = super.getDataFolder();
+			folder = helper.getDataFolder(context);
 		}	
 		else{
 			folder = new File(folderName);
 	        if ( !folder.exists() || !folder.isDirectory() ) {
-	        	folder = super.getDataFolder();
+	        	folder = helper.getDataFolder(context);
 	        }
 		}
         
 	    //String description = request.getParameter("description"); // Retrieves <input type="text" name="description">
-	    Part filePart1 = request.getPart("file"); // Retrieves <input type="file" name="file">
-	    if(filePart1 != null){
-	    	String fileName1 = filePart1.getSubmittedFileName();
+	    //Part filePart1 = request.getPart("file"); // Retrieves <input type="file" name="file">
+	    //if(filePart1 != null){
+	    //	String fileName1 = filePart1.getSubmittedFileName();
 	    	//InputStream fileContent = filePart.getInputStream();
-	    	System.out.println(fileName1);
-	    }
+	    	//System.out.println(fileName1);
+	    //}
 //		List<Part> fileParts = request.getParts().stream().filter(part -> "file".equals(part.getName())).collect(Collectors.toList()); // Retrieves <input type="file" name="file" multiple="true">
 		Collection<Part> fileParts = request.getParts();//.stream().filter(part -> "file".equals(part.getName())).collect(Collectors.toList()); // Retrieves <input type="file" name="file" multiple="true">
 	    // image/jpeg - file[0]
@@ -112,15 +144,16 @@ public class UploadServlet extends AbstractServlet {
 		File outFile = null;
 	    for (Part filePart : fileParts) {
 	        fileName = filePart.getSubmittedFileName();
-	        Collection<String> hn = filePart.getHeaderNames();
-	        System.out.println(filePart.getContentType() + " - " + filePart.getName());
-	        System.out.println(folder.getAbsolutePath() + " - " + fileName);
+	       // Collection<String> hn = filePart.getHeaderNames();
+	        //System.out.println(filePart.getContentType() + " - " + filePart.getName());
+	       // System.out.println(folder.getAbsolutePath() + " - " + fileName);
 	        InputStream fileContent = filePart.getInputStream();
-	        if( folderName != null && !(folderName.length() < 3) ){
+	        //if( folderName != null && !(folderName.length() < 3) ){
 	        	// OVERWRITE // TODO funktioniert irgendwie nicht ...
-	        	super.deleteFile(folder, fileName);
-	        }
-	       	outFile = writeToFileSystem(folder, fileName, fileContent);
+	        //	System.out.println("del:" + fileName);
+	        //	helper.deleteFile(folder, fileName);
+	        //}
+	       	outFile = writeToFileSystem(folder, fileName, fileContent, helper);
 	        fileContent.close();// TODO funzts jetzt noch?
 	        if(outFile != null){
 	    	    response.getWriter().append(outFile.getName()+"|");	        	
@@ -129,9 +162,10 @@ public class UploadServlet extends AbstractServlet {
 	    
 	}
 
-	private File writeToFileSystem(File folder, String fname, InputStream in){
+	private File writeToFileSystem(File folder, String fname, InputStream in, StaticUtils helper){
 		File outFile = new File(folder, fname);
 		if(outFile.exists() ){
+			System.out.println("File exists: " + outFile.getAbsolutePath());
 			return outFile;
 		}
 		OutputStream out = getOutputStream(outFile);
@@ -147,7 +181,7 @@ public class UploadServlet extends AbstractServlet {
 			}
 			out.flush();
 			out.close();
-			//convert(outFile);
+			convert(outFile, helper);
 			return outFile;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  * Servlet implementation class DownloadServlet
  */
 @WebServlet({ "/download","/download64" })
-public class DownloadServlet extends AbstractServlet {
+public class DownloadServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
@@ -48,15 +48,19 @@ public class DownloadServlet extends AbstractServlet {
 			return;
 		}
 		
+		StaticUtils helper = StaticUtils.getInstance();
 		File folder = null;
 		if(folderName.equals("in")){
-			folder = super.getDataFolder();
+			folder = helper.getDataFolder(this.getServletContext().getContextPath());
 		}
+		else if(folderName.equals("inCon")){
+			folder = helper.getDataConvFolder(this.getServletContext().getContextPath());
+		}		
 		else if(folderName.equals("zip")){
-			folder = super.getZipArchivFolder();
+			folder = helper.getZipArchivFolder(this.getServletContext().getContextPath());
 		}
 		else if(folderName.equals("xml")){
-			folder = super.getResFolder();
+			folder = helper.getResFolder();
 		}		
 		else{
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -90,7 +94,7 @@ public class DownloadServlet extends AbstractServlet {
 			response.getWriter().println( file.getAbsolutePath() + " ist nicht vorhanden!" );
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			//response.sendError(HttpServletResponse.SC_NOT_FOUND);
-			System.out.println( "file: " + file.getAbsolutePath() + " nich da!" );
+			//System.out.println( "nicht vorhanden: " + file.getAbsolutePath() );
 			return;			
 		}
 		

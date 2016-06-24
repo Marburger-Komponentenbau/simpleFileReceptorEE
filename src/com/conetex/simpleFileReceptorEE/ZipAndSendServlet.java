@@ -5,12 +5,15 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Vector;
+
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -27,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  * Servlet implementation class ZipAndSendServlet
  */
 @WebServlet("/ZipSendScan")
-public class ZipAndSendServlet extends AbstractServlet {
+public class ZipAndSendServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	
@@ -51,9 +54,11 @@ public class ZipAndSendServlet extends AbstractServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String files = request.getParameter("uploadedFiles");
+		ServletContext c = this.getServletContext();
+		String context = c.getContextPath();
 		if(files == null){
 			request.setAttribute("createdZips", "");
-		    RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/scanResult.jsp");
+		    RequestDispatcher dispatcher = c.getRequestDispatcher("/scanResult.jsp");
 	        dispatcher.forward(request, response);				
 			return;
 		}
@@ -63,17 +68,18 @@ public class ZipAndSendServlet extends AbstractServlet {
 		
 		StringTokenizer st = new StringTokenizer( files, "|" );		
 		
+		StaticUtils helper = StaticUtils.getInstance();
 		// tiffFiles zipFiles zuordnen
 		Map<String, Map<String,File>> zipFiles2TiffFiles = new HashMap<String, Map<String,File>> ();
 		while ( st.hasMoreTokens() ){
 			String filename = st.nextToken();
-			File tiffFile = new File(super.getDataFolder(), filename);
+			File tiffFile = new File(helper.getDataFolder(context), filename);
 			if(! tiffFile.exists() || ! tiffFile.canRead() ){
 				continue;
 			}
 			// tiffFile vorhanden...
-			String key = AbstractServlet.getKeyOfFile(filename);
-		    int idx = filename.indexOf( super.getKeySeparator() );
+			String key = helper.getKeyOfFile(filename);
+		    int idx = filename.indexOf( helper.getKeySeparator() );
 			if( idx > 0 ) 
 			{
 				key = filename.substring( 0, idx );
@@ -98,13 +104,13 @@ public class ZipAndSendServlet extends AbstractServlet {
 		while( keys.hasNext() )
 		{
 			String key = keys.next();			
-			File zipFile = super.getNewRenamedFile( this.getZipArchivFolder(), key + ".zip.tmp" );
+			File zipFile = helper.getNewRenamedFile( helper.getZipArchivFolder(context), key + ".zip.tmp" );
 			File zipFileTarget = null;
-			if(this.getZipArchivFolder().equals(this.getZipFolder())){
-				zipFileTarget = super.getNewRenamedFile( this.getZipFolder(), "t_" + key + ".zip" );
+			if(helper.getZipArchivFolder(context).equals(helper.getZipFolder())){
+				zipFileTarget = helper.getNewRenamedFile( helper.getZipFolder(), "t_" + key + ".zip" );
 			}
 			else{
-				zipFileTarget = super.getNewRenamedFile( this.getZipFolder(), key + ".zip" );
+				zipFileTarget = helper.getNewRenamedFile( helper.getZipFolder(), key + ".zip" );
 			}
 			if( zipFile.exists() )
 			{
@@ -113,28 +119,27 @@ public class ZipAndSendServlet extends AbstractServlet {
 			}
 			FileOutputStream fos = new FileOutputStream( zipFile );
 	    	ZipOutputStream zos = new ZipOutputStream( fos );
-	    	System.out.println( "Create Zip file: "+ zipFile.getAbsolutePath() );
-	    	String zippedFiles = "";
+	    	
 	    	byte[] buffer = new byte[16384];
+	    	List<String> zipped = new ArrayList<String>();
 	    	Map<String,File> sub = zipFiles2TiffFiles.get( key );
-			for( File tiffFile : sub.values() )
+			for( String tiffname : sub.keySet() )
 			{
-				System.out.println( "Add Zip entry: "+ tiffFile.getName() );
-				ZipEntry entry = new ZipEntry( tiffFile.getName() );
+				ZipEntry entry = new ZipEntry( tiffname );
 				zos.putNextEntry( entry );				
-				FileInputStream fin = new FileInputStream( tiffFile );
+				FileInputStream fin = new FileInputStream( sub.get(tiffname) );
 				int len;
 				while( ( len = fin.read( buffer ) ) > 0 )
 				{
 					zos.write( buffer, 0, len );
 				}
 				fin.close();
-				zippedFiles = zippedFiles + tiffFile.getName() + "|";
+				zipped.add(tiffname);
 				//tiffFile.delete();
 			}
 			zos.closeEntry();
 			zos.close();
-			File zipFileFin = super.getNewRenamedFile( this.getZipArchivFolder(), key + ".zip" );
+			File zipFileFin = helper.getNewRenamedFile( helper.getZipArchivFolder(context), key + ".zip" );
 			if( zipFileFin.exists() )
 			{
 				System.out.println( "Zip file: " + zipFileFin.getAbsolutePath() + " exists" );
@@ -145,13 +150,19 @@ public class ZipAndSendServlet extends AbstractServlet {
 			//move to target (Captiva)
 			Files.copy(zipFileFin.toPath(), zipFileTarget.toPath());
 			
+			Collections.sort(zipped);
+			String zippedFiles = "";
+			for( String tiffname : zipped )
+			{
+				zippedFiles = zippedFiles + tiffname + "|";
+			}
 			createdZips = createdZips + zipFileFin.getName() + "|";
 			request.setAttribute(zipFileFin.getName(), zippedFiles);
 			//response.getWriter().append(zipFileFin.getName()+"|");
 		}		 
 		
 		request.setAttribute("createdZips", createdZips);
-	    RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/scanResult.jsp");
+	    RequestDispatcher dispatcher = c.getRequestDispatcher("/scanResult.jsp");
         dispatcher.forward(request, response);			
 		
 		
