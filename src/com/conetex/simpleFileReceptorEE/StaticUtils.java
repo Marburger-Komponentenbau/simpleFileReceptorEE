@@ -7,12 +7,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Properties;
 
-//import javax.servlet.ServletContext;
-//import javax.servlet.http.HttpServlet;
-
 public class StaticUtils { 
-
-	//private static final long serialVersionUID = -2081219318396543572L;
 
 	private static String defaultFolderName = "data//";
 	private static String defaultSubFolderName = "dft";
@@ -40,11 +35,11 @@ public class StaticUtils {
 	private String resultFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
 	private File resultFolder = null;
 	
-	private String keySeparator = "_GHNW";//;
+	private String keySeparator = "_GHNW";
 	private String runIdSeparator = ".";
 	
-	private String i_view_Path = "";//;
-	private String imageSubFolderJpg = "jpg";//;
+	private String i_view_Path = "";
+	private String imageSubFolderJpg = "jpg";
 	
 	public String getRunIdSeparator() {
 		return runIdSeparator;
@@ -66,15 +61,13 @@ public class StaticUtils {
         super();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         InputStream input = classLoader.getResourceAsStream("servlet.properties");
-        // ...
-		Properties properties = new Properties();
+        Properties properties = new Properties();
 		try {
 			properties.load(input);
 		} catch (IOException e) {
 			System.out.println("Error reading Properties...");
 			e.printStackTrace();
 		}
-		//System.out.println("Properties found...");
 		this.dataFolderName = properties.getProperty("imageFolderParent", this.dataFolderName);
 		this.zipArchivFolderName = properties.getProperty("zipArchivFolderParent", this.zipArchivFolderName);
 		this.zipFolderName = properties.getProperty("zipFolder", this.zipFolderName);
@@ -89,9 +82,6 @@ public class StaticUtils {
 			}					
 		}
 		this.imageSubFolderJpg = properties.getProperty("imageSubFolderJpg", imageSubFolderJpg);
-		
-		
-		
     }
     
 	public File getZipArchivFolder(String c) {
@@ -115,7 +105,6 @@ public class StaticUtils {
 	
 	public File[] getFiles(final String imgFilename, String c){
 		File folder = this.getDataConvFolder(c);
-		//System.out.println("expected convertPath: " + folder.getAbsolutePath());
 		if(!folder.exists() || !folder.isDirectory()){
 			return new File[] {};
 		}
@@ -153,8 +142,7 @@ public class StaticUtils {
 	}
 	
 	private File getContextFolder(File parentFolder, String c){
-		 // this.getServletContext();
-        return createSubFolder(parentFolder, c);
+		return createSubFolder(parentFolder, c);
 	}
 	
 	private static File createSubFolder(File parent, String folderName){
@@ -163,7 +151,7 @@ public class StaticUtils {
         	folder = new File(parent, defaultSubFolderName);
         	if (! folder.exists()){
         		if(! folder.mkdir() ){
-        			System.err.println("SubFolder " + folder.getAbsolutePath() + " can not be created!");
+        			System.out.println("SubFolder " + folder.getAbsolutePath() + " can not be created!");
         		}
         	}
         }			
@@ -174,9 +162,9 @@ public class StaticUtils {
 		File folder = new File(folderName);
         if ( !folder.exists() && !folder.mkdir() ) {
         	folder = new File(defaultFolderName);
-        	if (! folder.exists()){
+        	if (! folder.exists() ){
         		if(! folder.mkdir() ){
-        			System.err.println("Folder " + folder.getAbsolutePath() + " can not be created!");
+        			System.out.println("Folder " + folder.getAbsolutePath() + " can not be created!");
         		}
         	}
         }			
@@ -188,16 +176,13 @@ public class StaticUtils {
 		if (file.exists()) {
 			String fnameEnd = fname;
 			String fnameBegin = "";
-			
 			int endIndex = fname.lastIndexOf(".");
 			if (endIndex != -1) {
 				fnameEnd = fname.substring(endIndex, fname.length());
 				fnameBegin = fname.substring(0, endIndex);
 			}
-			
 			int i = 0;
 			while (file.exists()) {
-				// fname.substring(0, endIndex);
 				file = new File(folder, fnameBegin + runIdSeparator + Integer.toString(i++) + fnameEnd);
 			}
 		}
@@ -205,24 +190,19 @@ public class StaticUtils {
 	}	
 	
 	public String getKeyOfFile(String fnameOrg) {
-
-			String fname = fnameOrg;
-			
-			int endIndex = fname.lastIndexOf(".");
-			if (endIndex > 1) {// -1: kein treffer, 0: treffer ganz links also kein key
-				               // 1: kein Platz fur keyseparator
-				fname = fname.substring(0, endIndex);
-			}
-
-			int endIndexDel = fname.lastIndexOf(this.runIdSeparator);
-			if (endIndexDel > 0) {// -1: kein treffer, 0: treffer ganz links also kein key
-				fname = fname.substring(0, endIndexDel);
-			}
-			
-			return fname;
-
+		String fname = fnameOrg;	
+		int endIndex = fname.lastIndexOf(".");
+		// -1: kein treffer, 0: treffer ganz links also kein key, 1: kein Platz fur keyseparator
+		if (endIndex > 1) {
+			fname = fname.substring(0, endIndex);
+		}
+		int endIndexDel = fname.lastIndexOf(this.runIdSeparator);
+		// -1: kein treffer, 0: treffer ganz links also kein key
+		if (endIndexDel > 0) {
+			fname = fname.substring(0, endIndexDel);
+		}	
+		return fname;
 	}	
-	
 	
 	public File deleteFile(File folder, String fname) {
 		File file = new File(folder, fname);
@@ -237,7 +217,5 @@ public class StaticUtils {
 		}
 		return file;
 	}
-
-
 	
 }

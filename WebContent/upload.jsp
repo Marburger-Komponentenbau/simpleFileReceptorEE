@@ -2,11 +2,9 @@
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <head>
- <meta charset="utf-8"> 
-<!--<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">-->
+<meta charset="utf-8"> 
 <%
 String contextPath = request.getContextPath();
-//String contextPath = request.getRequestURI();
 if(contextPath == null || contextPath.length() < 1) {
 	contextPath = "TU-C  -  Test Data Transfer";
 }
@@ -104,11 +102,9 @@ function submitZipSendScanForm()
 
     /*
     This is a list of all available events you can register on a dropzone object.
-    
     You can register an event handler like this:
-    
         dropzone.on("dragEnter", function() { });
-     */
+    */
 
     Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "addedfile", "addedfiles", "removedfile", "thumbnail", "error", "errormultiple", "processing", "processingmultiple", "uploadprogress", "totaluploadprogress", "sending", "sendingmultiple", "success", "successmultiple", "canceled", "canceledmultiple", "complete", "completemultiple", "reset", "maxfilesexceeded", "maxfilesreached", "queuecomplete"];
 
@@ -1656,9 +1652,7 @@ function submitZipSendScanForm()
 
   Dropzone.SUCCESS = "success";
 
-
   /*
-  
   Bugfix for iOS 6 and 7
   Source: http://stackoverflow.com/questions/11929099/html5-canvas-drawimage-ratio-bug-ios
   based on the work of https://github.com/stomita/ios-imagefile-megapixel
@@ -1772,9 +1766,7 @@ function submitZipSendScanForm()
 </script>
 
 <!--<link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">-->
-    <style>
-
-
+<style>
 body {
     color: black;
     font-family: Segoe UI, Tahoma,Verdana, Helvetica, Arial, sans-serif; 
@@ -1811,7 +1803,6 @@ body {
     padding: 0px 0px 10px 0px;
 	margin: 2px 0px 4px 0px;	
 }
-
 .title {
 	text-align: left;
     padding: 0px 0px 0px 10px;
@@ -1821,14 +1812,12 @@ body {
 	font-weight: bold;
 	float: left;
 }
-
 .nav {
     padding: 0px 10px 0px 0px;
 	margin: 0px 0px 0px 0px;
     text-align: right;
     float: clear;
 }
-
 .nav a{
     text-decoration: none;
     color: black; 
@@ -2225,9 +2214,7 @@ body {
         border-right: 6px solid transparent;
         border-bottom: 6px solid #be2626; }
 		
-		
-		
-    </style>
+</style>
 
 </head>
 <body>
@@ -2236,8 +2223,8 @@ body {
 <div class="kernelLogo">01-15-42&nbsp;|&nbsp;Risk Calculation Kernels</div>
 <div class="cobaLogo"><img src="https://portal.comproof.net/vpn/images/CoBa.png"></div> 
 <div id="title">
-<div class="title"><% out.print(contextPath); %></div> 
-<div class="nav"><a href="./">documents</a>&nbsp;|&nbsp;<a href="upload.jsp">upload</a></div>
+   <div class="title"><% out.print(contextPath); %></div> 
+   <div class="nav"><a href="./">documents</a>&nbsp;|&nbsp;<a href="upload.jsp">upload</a></div>
 </div>
 
 <%
@@ -2246,44 +2233,29 @@ if("Admin".equals(contextPath)){
 	params = "?absTargetPath=E:\\Apps\\RechenkernMain\\apache-tomcat-8.0.35\\webapps";//"?absTargetPath=E:\Apps\RechenkernMain\apache-tomcat-8.0.35\webapps";
 }
 %>
-<!-- Change /upload-target to your upload address -->
 <form class="dropzone" action="/<% out.print(contextPath); %>/upload<% out.print(params); %>" target="uploadResp"></form>
 
-<form name="ZipSendScanForm" class="inline" method="post" action="/<% out.print(contextPath); %>/ZipSendScan">
+<form name="ZipSendScanForm" class="inline" method="post" action="/<% out.print(contextPath); %>/Calculate">
   <input type="hidden" name="uploadedFiles" id="uploadedFiles" value="|">
-  <!-- <button type="submit">_send_</button>  -->
 </form>
 
-<p style="text-align: center;">
 <%
-String userAgent = request.getHeader("user-agent");
-//System.out.println( userAgent.indexOf("Firefox") );
-//System.out.println( userAgent.indexOf("Chrome") );
-//System.out.println( userAgent.indexOf("MSIE") );
-if (
-	(userAgent.indexOf("Firefox") > -1 ||
-	 userAgent.indexOf("Chrome") > -1 ||
-	 "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko".equals(userAgent)
-	) 
-   ) {
-	out.println("<a href=\"javascript: submitZipSendScanForm()\" class=\"linkButton\">recognize!</a>");
-}
-else{
-	out.println("<br/><br/><br/>Uploaded Files:<br/>");	
-	out.println("<iframe name=\"uploadResp\"></iframe>");
-}
-%>
-</p>
-
-<!-- 
-<iframe src="http://www.w3schools.com"></iframe>
- -->
-
-
-
- 
-<%
-out.println("<p style=\"font-size: 80%; text-align: center;\"><br/><br/><br/><br/><br/>Your browser: " + userAgent + "</p>");
+	out.println("<p style=\"text-align: center;\">");
+	String userAgent = request.getHeader("user-agent");
+	if (	(
+			userAgent.indexOf("Firefox") > -1 || 
+			userAgent.indexOf("Chrome") > -1 || 
+			"Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko".equals(userAgent)
+			)
+		) {
+		out.println("<a href=\"javascript: submitZipSendScanForm()\" class=\"linkButton\">recognize!</a>");
+	} 
+	else {
+		out.println("<br/><br/><br/>Uploaded Files:<br/>");
+		out.println("<iframe name=\"uploadResp\"></iframe>");
+	}
+	out.println("</p>");
+	out.println("<p style=\"font-size: 80%; text-align: center;\"><br/><br/><br/><br/><br/>Your browser: " + userAgent + "</p>");
 %>
 
 </body>

@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
-
-//import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,11 +22,12 @@ import javax.xml.transform.stream.StreamSource;
  */
 @WebServlet({ "/transform" })
 public class TransformServlet extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
        
-	Transformer transformer = null;
+	private Transformer transformer = null;
 	
-	private static Transformer getTransformer(String xsltStr){
+	private static Transformer createTransformer(String xsltStr){
         StringReader reader = new StringReader(xsltStr);
         
         TransformerFactory factory = TransformerFactory.newInstance();
@@ -47,14 +46,14 @@ public class TransformServlet extends HttpServlet {
      */
     public TransformServlet() {
         super();
-		this.transformer = getTransformer(
+		this.transformer = createTransformer(
 						    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						  + "<xsl:stylesheet version=\"1.0\""
 						  + "	xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\""
 						  + "	xmlns:SCAN=\"http://WSDLEntities.scan.zce.commerzbank.com/rk/Service.xsd\""
 						  + "	exclude-result-prefixes=\"SCAN\""
 						  + "	>"
-						  + ""
+
 						  + "<xsl:output"
 						  + "	method=\"text\""
 						  + "	encoding=\"UTF-8\""
@@ -62,8 +61,7 @@ public class TransformServlet extends HttpServlet {
 						  + "	standalone=\"yes\""
 						  + "	indent=\"yes\""
 						  + "	media-type=\"text/plain\" />"
-						  + "  "
-						  
+
 						  + "<xsl:template match=\"/\">"
 						  //+ "	<xsl:text>&lt;nav&gt;</xsl:text>"
 						  + "	<xsl:text>&lt;ul class=\"entities\"&gt;</xsl:text>"
@@ -71,15 +69,10 @@ public class TransformServlet extends HttpServlet {
 						  + "	   <xsl:apply-templates select=\"SCAN:GetScoreRequest/SCAN:kernelStructureInput/SCAN:entities\" />"
 						  + "	   <xsl:apply-templates select=\"SCAN:GetScoreResponse/SCAN:kernelStructureOutput/SCAN:faults\" />"
 						  + "	<xsl:text>&lt;/ul&gt;</xsl:text>"
-						  
 						  //+ "	<xsl:text>&lt;/nav&gt;</xsl:text>"
 						  + "</xsl:template>"				  
 						  
-						  //onclick="display(display);"
-						  //onclick="clicked(document.getElementById('btnSwH5').parentElement.nextSibling, 0, 0, true);clicked(document.getElementById('dw__toc'), 1, 0, false);refreshState(0);"
-						  
 						  + "<xsl:template match=\"SCAN:entities\">"
-						  + ""
 						  //+ "		<xsl:for-each select=\"*//SCAN:entities\">"
 						  //+ "		<xsl:for-each select=\"SCAN:GetScoreResponse/SCAN:kernelStructureOutput/SCAN:entities\">" 
 						  //+ "		<xsl:for-each select=\"SCAN:GetScoreRequest/SCAN:kernelStructureInput/SCAN:entities\">"
@@ -104,11 +97,9 @@ public class TransformServlet extends HttpServlet {
 						  + "	            <xsl:text>&lt;/ul&gt;</xsl:text>"
 						  + "			<xsl:text>&lt;/li&gt;</xsl:text>"
 						  //+ "		</xsl:for-each>"
-						  + ""
 						  + "</xsl:template>"
-						  + ""						  
+						  
 						  + "<xsl:template match=\"SCAN:faults\">"
-						  + ""
 						  + "			 <xsl:text>&lt;li class=\"entity\"&gt;</xsl:text>"
 						  + "			    <xsl:text>&lt;a href=\"javascript:void(0)\" onclick=\"display(this,this);\" &gt;</xsl:text>"
 						  + "			       <xsl:text>Fault</xsl:text>"
@@ -125,15 +116,10 @@ public class TransformServlet extends HttpServlet {
 						  + "						<xsl:text>&lt;/tr&gt;</xsl:text>"
 						  + "				<xsl:text>&lt;/table&gt;</xsl:text>"
 						  + "			<xsl:text>&lt;/li&gt;</xsl:text>"
-						  + ""
 						  + "</xsl:template>"						  
-						  
-						  
-						  + ""
+
 						  + "</xsl:stylesheet>"
 				);
-		   	
-        
     }
 
 	/**
@@ -147,10 +133,7 @@ public class TransformServlet extends HttpServlet {
 			return;
 		}
 		
-		//ServletContext c = this.getServletContext();
-		//String context = c.getContextPath();
 		StaticUtils helper = StaticUtils.getInstance();
-		
 		File file = new File(helper.getResFolder(), fileName);
 		for(int i = 0; ! file.exists() && i < 7; i++){
 			try {
@@ -163,7 +146,6 @@ public class TransformServlet extends HttpServlet {
 		if( ! file.exists() || ! file.canRead() ){
 			response.getWriter().println( file.getAbsolutePath() + " ist nicht vorhanden!" );
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			//response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			System.out.println( "nicht vorhanden: " + file.getAbsolutePath() );
 			return;			
 		}
@@ -171,12 +153,10 @@ public class TransformServlet extends HttpServlet {
         // You must tell the browser the file type you are going to send
         // for example application/pdf, text/plain, text/html, image/jpg
         response.setContentType("text/plain");
-
         // Make sure to show the download dialog
         response.setHeader("Content-disposition","attachment; filename=" + fileName);
 	
         OutputStream out = response.getOutputStream();
-		
         Source text = new StreamSource( file );
         StreamResult streamRes = new StreamResult( out );
         try {
@@ -184,8 +164,7 @@ public class TransformServlet extends HttpServlet {
 		} catch (TransformerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-        
+		}        
 		out.flush();		
 	}
 
@@ -193,7 +172,6 @@ public class TransformServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 
