@@ -1,16 +1,12 @@
 package com.conetex.simpleFileReceptorEE;
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.util.Collection;
-
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -19,92 +15,51 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
-
-
 /**
- * Servlet implementation class UploadServlet   
+ * Servlet implementation class UploadServlet
  */
 @WebServlet("/upload")
 @MultipartConfig
-public class UploadServlet extends HttpServlet {    
-	
+public class UploadServlet extends HttpServlet {
+
 	private static final long serialVersionUID = 1L;
 
-	//private static final String dataFolder = "C://_//02 Eclipse JEE Workspace//_GitHub//simpleFileReceptorEE//data//";
-	//private static final String dataFolder = "C://dev//Projekte//EclipseEE_WS//data//";
-	//private static final String dataFolder = "data//";
-	//private static String dataFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
-	
-	//private static File dataFolder = null; 
-	
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public UploadServlet() {
-        super();
-    }
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public UploadServlet() {
+		super();
+	}
 
-    public static void main(String[] a){
-    	convert(new File("C:\\dev\\Projekte\\EclipseEE_WS\\simpleFileReceptorEE\\test.TIF"), StaticUtils.getInstance());
-    }
-    
-    private static void convert(File file, StaticUtils helper){
-    	
-    	String i_view_Path = helper.getI_view_Path(); 
-    	if(i_view_Path.length() < 3 || file == null || 
-    	   (
-    		! file.getName().toLowerCase().endsWith(".tif")
-    		&&
-    		! file.getName().toLowerCase().endsWith(".tiff")
-    	   )
-    	  ){
-    		return;
-    	}
-    	
-/*
-set iviewpath=E:\Install\IrfanView
-set target=target_dir_jpg
-FOR %%t in (*.tif) DO "%iviewpath%\i_view32.exe" "%%t" /extract=(%target%,jpg) /killmesoftly
-*/
-		int re = new ProcessWithTimeout(
-				new ProcessBuilder(
-					i_view_Path,
-					file.getAbsolutePath(),
-					"/extract=(" + helper.getImageSubFolderJpg() + ",jpg)",
-					"/killmesoftly"
+	public static void main(String[] a) {
+		convert(new File("C:\\dev\\Projekte\\EclipseEE_WS\\simpleFileReceptorEE\\test.TIF"), StaticUtils.getInstance());
+	}
+
+	private static void convert(File file, StaticUtils helper) {
+		String i_view_Path = helper.getI_view_Path();
+		if (i_view_Path.length() < 3 || file == null || 
+				(
+				!file.getName().toLowerCase().endsWith(".tif") && 
+				!file.getName().toLowerCase().endsWith(".tiff")
 				)
-			).waitForProcess(5000);
-			
+			) {
+			return;
+		}
+
+		int re = new ProcessWithTimeout(
+						new ProcessBuilder(i_view_Path, 
+							file.getAbsolutePath(),
+							"/extract=(" + helper.getImageSubFolderJpg() + ",jpg)",
+							"/killmesoftly")
+					).waitForProcess(5000);
+
 		System.out.println("convert " + file.getAbsolutePath() + " returns " + re);
-    	
-    	//C:\dev\Programme\IrfanView
-    	/*
-    	StaticUtils helper = StaticUtils.getInstance();
-    	
-    	String fname = file.getName();
-    	String fnamel = fname.toLowerCase();
-    	if(fnamel.endsWith(".tif") || fnamel.endsWith(".tiff")){
-        	File outFile = helper.getNewRenamedFile( helper.getDataFolder(this.getServletContext().getContextPath()), fname + ".c.jpg" );
-        	BufferedImage image = null;
-    		try {
-    			image = ImageIO.read(file);
-    			
-    			ImageIO.write(image, "jpg", outFile);
-    			System.out.println(outFile.getAbsolutePath());
-    		} catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}         	
-    	}
-    	*/
-    }
-    
-    
+	}
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().append("Served at: ").append(request.getContextPath());
@@ -118,65 +73,46 @@ FOR %%t in (*.tif) DO "%iviewpath%\i_view32.exe" "%%t" /extract=(%target%,jpg) /
 		response.setCharacterEncoding("UTF-8");
 		StaticUtils helper = StaticUtils.getInstance();
 		String context = this.getServletContext().getContextPath();
-		File folder = null; 
+		File folder = null;
 		String folderName = request.getParameter("absTargetPath");
-		if(folderName == null || folderName.length() < 3){
+		if (folderName == null || folderName.length() < 3) {
 			folder = helper.getDataFolder(context);
-		}	
-		else{
+		} else {
 			folder = new File(folderName);
-	        if ( !folder.exists() || !folder.isDirectory() ) {
-	        	folder = helper.getDataFolder(context);
-	        }
+			if (!folder.exists() || !folder.isDirectory()) {
+				folder = helper.getDataFolder(context);
+			}
 		}
-        
-	    //String description = request.getParameter("description"); // Retrieves <input type="text" name="description">
-	    //Part filePart1 = request.getPart("file"); // Retrieves <input type="file" name="file">
-	    //if(filePart1 != null){
-	    //	String fileName1 = filePart1.getSubmittedFileName();
-	    	//InputStream fileContent = filePart.getInputStream();
-	    	//System.out.println(fileName1);
-	    //}
-//		List<Part> fileParts = request.getParts().stream().filter(part -> "file".equals(part.getName())).collect(Collectors.toList()); // Retrieves <input type="file" name="file" multiple="true">
-		Collection<Part> fileParts = request.getParts();//.stream().filter(part -> "file".equals(part.getName())).collect(Collectors.toList()); // Retrieves <input type="file" name="file" multiple="true">
-	    // image/jpeg - file[0]
+
+		Collection<Part> fileParts = request.getParts();
 		String fileName = "?";
 		File outFile = null;
-	    for (Part filePart : fileParts) {
-	        fileName = filePart.getSubmittedFileName();
-	       // Collection<String> hn = filePart.getHeaderNames();
-	        //System.out.println(filePart.getContentType() + " - " + filePart.getName());
-	       // System.out.println(folder.getAbsolutePath() + " - " + fileName);
-	        InputStream fileContent = filePart.getInputStream();
-	        //if( folderName != null && !(folderName.length() < 3) ){
-	        	// OVERWRITE // TODO funktioniert irgendwie nicht ...
-	        //	System.out.println("del:" + fileName);
-	        //	helper.deleteFile(folder, fileName);
-	        //}
-	       	outFile = writeToFileSystem(folder, fileName, fileContent, helper);
-	        fileContent.close();// TODO funzts jetzt noch?
-	        if(outFile != null){
-	    	    response.getWriter().append(outFile.getName()+"|");	        	
-	        }
-	    }
-	    
+		for (Part filePart : fileParts) {
+			fileName = filePart.getSubmittedFileName();
+			InputStream fileContent = filePart.getInputStream();
+			outFile = writeToFileSystem(folder, fileName, fileContent, helper);
+			fileContent.close();
+			if (outFile != null) {
+				response.getWriter().append(outFile.getName() + "|");
+			}
+		}
 	}
 
-	private File writeToFileSystem(File folder, String fname, InputStream in, StaticUtils helper){
+	private File writeToFileSystem(File folder, String fname, InputStream in, StaticUtils helper) {
 		File outFile = new File(folder, fname);
-		if(outFile.exists() ){
+		if (outFile.exists()) {
 			System.out.println("File exists: " + outFile.getAbsolutePath());
 			return outFile;
 		}
 		OutputStream out = getOutputStream(outFile);
-		if(out == null || in == null){
+		if (out == null || in == null) {
 			return null;
 		}
-		
-		byte[] buffer = new byte[32768];        
-        int len;
-        try {
-			while( (len = in.read(buffer)) > 0 ){
+
+		byte[] buffer = new byte[32768];
+		int len;
+		try {
+			while ((len = in.read(buffer)) > 0) {
 				out.write(buffer, 0, len);
 			}
 			out.flush();
@@ -189,18 +125,16 @@ FOR %%t in (*.tif) DO "%iviewpath%\i_view32.exe" "%%t" /extract=(%target%,jpg) /
 			return null;
 		}
 	}
-	
+
 	private static FileOutputStream getOutputStream(File file) {
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(file, false);
 		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return fos;
 	}
-	
-	
-	
-	
+
 }
