@@ -1,4 +1,4 @@
-package com.conetex.simpleFileReceptorEE;
+package com.commerzbank.simpleFileReceptorEE;
 
 import java.io.File;
 import java.io.FileNotFoundException;

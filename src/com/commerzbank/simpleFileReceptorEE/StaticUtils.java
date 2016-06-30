@@ -1,4 +1,4 @@
-package com.conetex.simpleFileReceptorEE;
+package com.commerzbank.simpleFileReceptorEE;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -101,7 +101,7 @@ public class StaticUtils {
 
 	public File getDataConvFolder(String c){
         return new File(this.getDataFolder(c), this.imageSubFolderJpg);
-	}
+	}	
 	
 	public File[] getFiles(final String imgFilename, String c){
 		File folder = this.getDataConvFolder(c);

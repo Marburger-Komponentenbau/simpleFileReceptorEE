@@ -188,7 +188,7 @@ div.Res {
 	<a href="javascript: submitDeleteForm()" id="delete" class="linkButton">delete!</a>
 	&nbsp;
 <%
-	out.println("<a href=\"javascript: submitZipSendScanForm()\" class=\"linkButton\">recognize!</a>");
+	out.println("<a href=\"javascript: submitZipSendScanForm()\" class=\"linkButton\">report!</a>");
 %>	
   </div>
 
@@ -198,14 +198,14 @@ div.Res {
 <p id="fileList">
 <%
 	StaticUtils helper = StaticUtils.getInstance();
-	File folder = helper.getDataFolder(contextPath);
+	File folder = helper.getResFolder();
 	File[] files = folder.listFiles();
 	Arrays.sort(files);
 	if (files != null) {
 		for (File file : files) {
 			String fname = file.getName();
 			String fnameLc = fname.toLowerCase();
-			if(fnameLc.endsWith(".tif") || fnameLc.endsWith(".pdf") || fnameLc.endsWith(".tiff")){
+			if(fnameLc.endsWith(".xml") || fnameLc.startsWith("response_")){
 				out.println("<span><input id=\"" + fname + "\" type=\"checkbox\" />");
 				out.println(fname);
 				out.println("</span><br />");
@@ -217,13 +217,13 @@ div.Res {
 </div> 
 
 
-<form name="ZipSendScanForm" class="inline" method="post" action="/<% out.print(contextPath); %>/Calculate">
+<form name="ReportForm" class="inline" method="post" action="/<% out.print(contextPath); %>/Report">
   <input type="hidden" name="uploadedFiles" id="uploadedFiles" value="|">
 </form>
 <form name="DeleteForm" class="inline" method="post" action="/<% out.print(contextPath); %>/Delete">
   <input type="hidden" name="files2Delete" id="files2Delete" value="|">
-  <input type="hidden" name="folder" id="folder" value="in">
-  <input type="hidden" name="forwardTarget" id="forwardTarget" value="/index.jsp">
+  <input type="hidden" name="folder" id="folder" value="xml">
+  <input type="hidden" name="forwardTarget" id="forwardTarget" value="/xml.jsp">
 </form>
 
 </body>

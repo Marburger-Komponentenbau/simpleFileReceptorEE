@@ -2,7 +2,7 @@
 	language="java" 
 	contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"
-    import="java.util.StringTokenizer, java.io.File, javax.xml.bind.DatatypeConverter, com.conetex.simpleFileReceptorEE.StaticUtils" 
+    import="java.util.StringTokenizer, java.io.File, javax.xml.bind.DatatypeConverter, com.commerzbank.simpleFileReceptorEE.StaticUtils" 
     %>
 <!DOCTYPE html>
 <!-- <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">   -->
@@ -24,7 +24,8 @@ else{
 <script type="text/javascript" src="./splitter.js"></script>
 
 <script type="text/javascript">
-function loadXMLTransformed(btn, file, target) {
+
+function loadXMLTransformed(btn, file, target, repLink) {
     var xmlhttp;
 	var node = document.getElementById(target);
     var btnNode = document.getElementById(btn);
@@ -55,7 +56,12 @@ function loadXMLTransformed(btn, file, target) {
   			  btnNode.style.opacity = 1;
   		   }
            if(xmlhttp.status == 200){
-        	   node.innerHTML = xmlhttp.responseText;
+        	   if(repLink){
+            	   node.innerHTML = "<p class=\"center\"><a href=\"./report?folder=xml&file=".concat(file).concat("\" class=\"xmlLoadButton\" target=\"_blank\" download>download report</a></p>").concat(xmlhttp.responseText);        		   
+        	   }
+        	   else{
+            	   node.innerHTML = xmlhttp.responseText;        		           		   
+        	   }
            }
            else {
               node.innerHTML = "<p class=\"msg\">bin noch nicht so weit! <br/>versuchen Sie es bitte gleich nochmal...</p>";
@@ -230,6 +236,9 @@ a.ZipFileLink {
 	text-align: center;
 	color: red; 
 }
+p.center {
+	text-align: center; 
+}
 </style>
 
 </head>
@@ -251,6 +260,10 @@ if(zipFilenamesObj == null){
 	out.println( "<p class=\"msg\"> invalider Aufruf ... </p>" );
 }
 else{
+	String doReport = "false";
+	if(contextPath.startsWith("DiGest")){
+		doReport = "true";
+	}
 	String zipFilenames = zipFilenamesObj.toString();
 	if(zipFilenames.length() < 2){
 		out.println( "<p class=\"msg\"> keine Daten verarbeitet ... </p>" );
@@ -345,30 +358,34 @@ else{
 			}
 			out.println( "</ul>" );
 		}		
-		out.println( "</div>" );		
+		out.println( "</div>" ); // LeftPane		
 		
 		out.println("<div class=\"RightPane\">" );
 		String requestXmlFilename = "request_" + caseKey + ".xml";
 		out.println(
 				     "<div class=\"RecognitionResultAndLink\">" + 
 					 "<a href=\"javascript:loadXMLTransformed('RecognitionLink','" + requestXmlFilename +
-				     "','" + requestXmlFilename + "')\"" +
+				     "','" + requestXmlFilename + "',false)\"" +
 		             " class=\"xmlLoadButton\" id=\"RecognitionLink\">Recognition Result" + "</a>:&nbsp;<br/>" + requestXmlFilename  +
 				     "<div id=\"" + requestXmlFilename + "\" class=\"RecognitionResult\"></div>" +  
 				     "</div>" 
 					);		
 		String responseXmlFilename = "response_" + caseKey + ".xml";
 		out.println(
-				    "<div class=\"KernelResponseAndLink\">" + 
+				     "<div class=\"KernelResponseAndLink\">" + 
 		             "<a href=\"javascript:loadXMLTransformed('KernelLink','" + responseXmlFilename +
-				     "','" + responseXmlFilename + "')\"" +
+				     "','" + responseXmlFilename + "'," + doReport + ")\"" +
 		             " class=\"xmlLoadButton\" id=\"KernelLink\">Rechenkern Response" + "</a>:&nbsp;<br/>" + responseXmlFilename +
+//			           "&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"/" + contextPath + "/report?folder=xml&file=" + "RKENTW_SCAN185400_2016-06-14_16-13-57_354_response.xml" + "\" class=\"xmlLoadButton\" target=\"_blank\" download>" +
+//			           "report</a>" +	           
 					 "<div id=\"" + responseXmlFilename + "\" class=\"KernelResponse\"></div>" + 
-				     "</div>" 
+					 "</div>" 
 					);	
-		out.println( "</div>" );
+		out.println( "</div>" ); // RightPane
 		
-		out.println("</div>");
+	    out.println( "</div>" ); // Splitter
+		
+		//out.println("</div>");
 		out.println("</li>");
 	}
 	out.println( "</ul>" );

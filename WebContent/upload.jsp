@@ -1794,7 +1794,7 @@ body {
 .linkButton:link, .linkButton:visited {
     background-color: #FFCF31;
     color: black;
-    padding: 6px 12px;
+    padding: 6px 12px 6px 12px;
     text-align: center; 
     text-decoration: none;
     display: inline-block;
@@ -2246,35 +2246,38 @@ body {
    <div class="title"><% out.print(contextPath); %></div> 
    <div class="nav"><a href="./">documents</a>&nbsp;|&nbsp;<a href="upload.jsp">upload</a></div>
 </div>
-
 <%
-String params = "";
-if("Admin".equals(contextPath)){
-	params = "?absTargetPath=E:\\Apps\\RechenkernMain\\apache-tomcat-8.0.35\\webapps";//"?absTargetPath=E:\Apps\RechenkernMain\apache-tomcat-8.0.35\webapps";
-}
+	String params = "";
+	if("Admin".equals(contextPath)){
+		params = "?absTargetPath=E:\\Apps\\RechenkernMain\\apache-tomcat-8.0.35\\webapps";//"?absTargetPath=E:\Apps\RechenkernMain\apache-tomcat-8.0.35\webapps";
+	}
+	String userAgent = request.getHeader("user-agent");
+	if (	(
+			   userAgent.indexOf("Firefox") > -1 
+			|| userAgent.indexOf("Chrome") > -1 
+			|| "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko".equals(userAgent)
+			)
+		) {
+		out.println("<div style=\"text-align: right;\">");
+		out.println("<div style=\"padding: 0px 0px 8px 0px;\"><a href=\"javascript: submitZipSendScanForm()\" class=\"linkButton\">recognize!</a></div>");
+		out.println("</div>");
+		out.println("<form class=\"dropzone\" action=\"/" + contextPath + "/upload" + params + "\" target=\"uploadResp\"></form>");
+	} 
+	else {
+		//out.println("<div>&nbsp;</div>");
+		out.println("<form class=\"dropzone\" action=\"/" + contextPath + "/upload" + params + "\" target=\"uploadResp\"></form>");
+		out.println("<div style=\"text-align: center;\">");
+		out.println("<br/><br/><br/>Uploaded Files:<br/>");
+		out.println("<iframe name=\"uploadResp\"></iframe>");
+		out.println("</div>");
+	}
 %>
-<form class="dropzone" action="/<% out.print(contextPath); %>/upload<% out.print(params); %>" target="uploadResp"></form>
 
 <form name="ZipSendScanForm" class="inline" method="post" action="/<% out.print(contextPath); %>/Calculate">
   <input type="hidden" name="uploadedFiles" id="uploadedFiles" value="|">
 </form>
 
 <%
-	out.println("<p style=\"text-align: center;\">");
-	String userAgent = request.getHeader("user-agent");
-	if (	(
-			userAgent.indexOf("Firefox") > -1 || 
-			userAgent.indexOf("Chrome") > -1 || 
-			"Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko".equals(userAgent)
-			)
-		) {
-		out.println("<a href=\"javascript: submitZipSendScanForm()\" class=\"linkButton\">recognize!</a>");
-	} 
-	else {
-		out.println("<br/><br/><br/>Uploaded Files:<br/>");
-		out.println("<iframe name=\"uploadResp\"></iframe>");
-	}
-	out.println("</p>");
 	out.println("<p style=\"font-size: 80%; text-align: center;\"><br/><br/><br/><br/><br/>Your browser: " + userAgent + "</p>");
 %>
 
