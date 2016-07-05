@@ -1,6 +1,7 @@
 data
 build
 misc
+.svn
 
 # Windows image file caches
 Thumbs.db
