@@ -57,6 +57,9 @@ public class CalculateServlet extends HttpServlet {
 		Map<String, Map<String,File>> zipFiles2TiffFiles = new HashMap<String, Map<String,File>>();
 		while ( st.hasMoreTokens() ){
 			String filename = st.nextToken();
+			if( filename.length() < 5 ){
+				continue;
+			}			
 			File tiffFile = new File(helper.getDataFolder(context), filename);
 			if(! tiffFile.exists() || ! tiffFile.canRead() ){
 				continue;

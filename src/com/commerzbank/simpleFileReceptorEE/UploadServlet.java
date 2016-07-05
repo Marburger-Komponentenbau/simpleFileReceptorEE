@@ -90,7 +90,9 @@ public class UploadServlet extends HttpServlet {
 		for (Part filePart : fileParts) {
 			fileName = filePart.getSubmittedFileName();
 			InputStream fileContent = filePart.getInputStream();
-			outFile = writeToFileSystem(folder, fileName, fileContent, helper);
+			//outFile = writeToFileSystem(folder, fileName, fileContent, helper);
+			outFile = StaticUtils.writeToFileSystem(new File(folder, fileName), fileContent);
+			convert(outFile, helper);			
 			fileContent.close();
 			if (outFile != null) {
 				response.getWriter().append(outFile.getName() + "|");
@@ -98,13 +100,13 @@ public class UploadServlet extends HttpServlet {
 		}
 	}
 
-	private File writeToFileSystem(File folder, String fname, InputStream in, StaticUtils helper) {
+	private File _writeToFileSystem(File folder, String fname, InputStream in, StaticUtils helper) {
 		File outFile = new File(folder, fname);
 		if (outFile.exists()) {
 			System.out.println("File exists: " + outFile.getAbsolutePath());
 			return outFile;
 		}
-		OutputStream out = getOutputStream(outFile);
+		OutputStream out = _getOutputStream(outFile);
 		if (out == null || in == null) {
 			return null;
 		}
@@ -126,7 +128,7 @@ public class UploadServlet extends HttpServlet {
 		}
 	}
 
-	private static FileOutputStream getOutputStream(File file) {
+	private static FileOutputStream _getOutputStream(File file) {
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(file, false);

@@ -1,9 +1,12 @@
 package com.commerzbank.simpleFileReceptorEE;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.Set;
@@ -220,6 +223,44 @@ public class StaticUtils {
 			}
 		}
 		return file;
+	}
+	
+	public static File writeToFileSystem(File outFile, InputStream in) {
+		if (outFile.exists()) {
+			System.out.println("File exists: " + outFile.getAbsolutePath());
+			return outFile;
+		}
+		OutputStream out = getOutputStream(outFile);
+		if (out == null || in == null) {
+			return null;
+		}
+
+		byte[] buffer = new byte[32768];
+		int len;
+		try {
+			while ((len = in.read(buffer)) > 0) {
+				out.write(buffer, 0, len);
+			}
+			out.flush();
+			out.close();
+			
+			return outFile;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private static FileOutputStream getOutputStream(File file) {
+		FileOutputStream fos = null;
+		try {
+			fos = new FileOutputStream(file, false);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return fos;
 	}
 	
 }
