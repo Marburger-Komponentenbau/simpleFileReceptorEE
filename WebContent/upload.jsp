@@ -2277,8 +2277,12 @@ body {
   <input type="hidden" name="uploadedFiles" id="uploadedFiles" value="|">
 </form>
 
+<p style="font-size: 90%; text-align: center;"><br/><br/>&copy; Group Risk Controlling & Capital Management<br/>Risk Architecture, Calculation-Kernels + Interfaces</p>
+
 <%
-	out.println("<p style=\"font-size: 80%; text-align: center;\"><br/><br/><br/><br/><br/>Your browser: " + userAgent + "</p>");
+	if(! "DiGest-Test".equals(contextPath)){
+		out.println("<p style=\"font-size: 80%; text-align: center;\"><br/><br/><br/><br/>Your browser: " + userAgent + "</p>");
+	}
 %>
 
 </body>

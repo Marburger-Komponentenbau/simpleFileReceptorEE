@@ -2,7 +2,7 @@
 	language="java" 
 	contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"
-    import="java.util.StringTokenizer, java.io.File, javax.xml.bind.DatatypeConverter, com.commerzbank.simpleFileReceptorEE.StaticUtils" 
+    import="java.util.StringTokenizer, java.io.File, javax.xml.bind.DatatypeConverter, com.commerzbank.simpleFileReceptorEE.StaticUtils, java.util.HashSet, java.util.Set" 
     %>
 <!DOCTYPE html>
 <!-- <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">   -->
@@ -293,6 +293,7 @@ else{
 			String imgFilenames = imgFilenamesObj.toString();
 			StringTokenizer stImg = new StringTokenizer( imgFilenames, "|" );		
 			out.println( "<ul class=\"ImageFilesList\">" );
+			Set<String> allJpgFiles = new HashSet<String>();
 			while ( stImg.hasMoreTokens() ){
 				String imgFilename = stImg.nextToken();	
 				String imgFilenameLowerCase = imgFilename.toLowerCase();
@@ -318,28 +319,30 @@ else{
 				else{
 					File[] jpgFiles = null;
 					if(  (imgFilenameLowerCase.endsWith(".tif") || imgFilenameLowerCase.endsWith(".tiff")) &&
-						 ( jpgFiles = helper.getFiles(imgFilename, contextPath) ).length > 0
-						){
+						 ( jpgFiles = helper.getFiles(allJpgFiles, imgFilename, contextPath) ).length > 0
+					  ){
 						for(File f : jpgFiles){
-							System.out.println(f.getAbsolutePath());
-							
 							imgFilename = f.getName();	
-							String imgFilename64 = new String( DatatypeConverter.printBase64Binary( imgFilename.getBytes() ) );
-							String imgFolderParam = "inCon";
-							
-							out.println( "<li class=\"ImageFileListItem\">" );
-							out.print( "<a href=\"javascript:void(0)\" onclick=\"display(this.nextSibling.nextSibling,this);\">" + imgFilename + "</a>" );//
-							
-								out.println( "<a href=\"/" + contextPath + "/download64?folder=" + imgFolderParam + "&file=" + imgFilename64 + "\" class=\"ImageFileLink\" target=\"_blank\" download>" );//
-								out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");					
-								out.println( "download" );
-								out.println( "</a>" );
-								out.println( "<img class=\"ImageFileImg\" src=\"/" + contextPath + "/download64?folder=" + imgFolderParam + "&file=" + imgFilename64 + "\" alt=\"no plugin for this image" + "\" >" );// style=\"width:304px;height:228px;\"
-										
-							out.println( "</li>" );													
+							if( ! allJpgFiles.contains(imgFilename) ){
+								//System.out.println(f.getAbsolutePath());
+								allJpgFiles.add(imgFilename);									
+								String imgFilename64 = new String( DatatypeConverter.printBase64Binary( imgFilename.getBytes() ) );
+								String imgFolderParam = "inCon";
+								
+								out.println( "<li class=\"ImageFileListItem\">" );
+								out.print( "<a href=\"javascript:void(0)\" onclick=\"display(this.nextSibling.nextSibling,this);\">" + imgFilename + "</a>" );//
+								
+									out.println( "<a href=\"/" + contextPath + "/download64?folder=" + imgFolderParam + "&file=" + imgFilename64 + "\" class=\"ImageFileLink\" target=\"_blank\" download>" );//
+									out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");					
+									out.println( "download" );
+									out.println( "</a>" );
+									out.println( "<img class=\"ImageFileImg\" src=\"/" + contextPath + "/download64?folder=" + imgFolderParam + "&file=" + imgFilename64 + "\" alt=\"no plugin for this image" + "\" >" );// style=\"width:304px;height:228px;\"
+											
+								out.println( "</li>" );	
+							}
 						}
 					}
-					else{
+					else {
 						String imgFilename64 = new String( DatatypeConverter.printBase64Binary( imgFilename.getBytes() ) );
 						String imgFolderParam = "in";
 						

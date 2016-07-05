@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.Set;
 
 public class StaticUtils { 
 
@@ -103,7 +104,7 @@ public class StaticUtils {
         return new File(this.getDataFolder(c), this.imageSubFolderJpg);
 	}	
 	
-	public File[] getFiles(final String imgFilename, String c){
+	public File[] getFiles(final Set<String> allJpgFiles, final String imgFilename, String c){
 		File folder = this.getDataConvFolder(c);
 		if(!folder.exists() || !folder.isDirectory()){
 			return new File[] {};
@@ -112,7 +113,10 @@ public class StaticUtils {
 		File[] re = folder.listFiles(
 				new FilenameFilter() {
 				    public boolean accept(File dir, String name) {
-				        return name.startsWith(imgName);// name.toLowerCase().endsWith(".jpg");
+				    	if( name.startsWith(imgName) ){// name.toLowerCase().endsWith(".jpg");
+				    		return true;
+				    	}
+		    			return false;
 				    }
 				}
 			);
