@@ -2,6 +2,7 @@ data
 build
 misc
 .svn
+*.war
 
 # Windows image file caches
 Thumbs.db

@@ -201,7 +201,6 @@ li.ImageFileListItem img {
     min-width: 500px;
     min-height: 770px;
     width: 750px;   
-    display: block;
     font-size: 90%;
 }
 div.RecognitionResultAndLink, 
@@ -240,7 +239,11 @@ p.center {
 	text-align: center; 
 }
 </style>
-
+<!-- 
+a.ImageFileToggler {
+	opacity: 0.5;
+}
+-->
 </head>
 <body>
  
@@ -300,16 +303,16 @@ else{
 								
 				if(imgFilenameLowerCase.endsWith(".pdf")){
 					String imgFilename64 = new String( DatatypeConverter.printBase64Binary( imgFilename.getBytes() ) );
-
-					out.println( "<li class=\"ImageFileListItem\">" );
-					out.print( "<a href=\"javascript:void(0)\" onclick=\"display(this.nextSibling.nextSibling,this);\">" + imgFilename + "</a>" );//
 					
-						out.print(  "<a href=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" class=\"ImageFileLink\" target=\"_blank\" download>" );//
+					out.println( "<li class=\"ImageFileListItem\">" );
+					out.print( "<a href=\"javascript:void(0)\" onclick=\"display(this.nextSibling.nextSibling,this);\" class=\"ImageFileToggler\" style=\"opacity: 0.5;\">" + imgFilename + "</a>" );//
+					
+						out.print(  "<a href=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" class=\"ImageFileLink\" target=\"_blank\" download>" );//display: none;
 						out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 						out.println( "download" );//					
 						out.println( "</a>" );//					
 	
-						out.println( "<object data=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" type=\"application/pdf\">" );
+						out.println( "<object data=\"/" + contextPath + "/download64?folder=in&file=" + imgFilename64 + "\" type=\"application/pdf\" style=\"display: none;\">" );
 						out.println( "kein pdf - plugin vorhanden! Fuer Firefox siehe: " );
 						out.println( "<a href=\"./helpFirefoxPlugin.html\" class=\"ImageFileLink\" target=\"_blank\">\"<b>helpFirefoxPlugin.html</b>\"</a>" );//
 						out.println( "</object>" );
@@ -330,13 +333,13 @@ else{
 								String imgFolderParam = "inCon";
 								
 								out.println( "<li class=\"ImageFileListItem\">" );
-								out.print( "<a href=\"javascript:void(0)\" onclick=\"display(this.nextSibling.nextSibling,this);\">" + imgFilename + "</a>" );//
+								out.print( "<a href=\"javascript:void(0)\" onclick=\"display(this.nextSibling.nextSibling,this);\" class=\"ImageFileToggler\" style=\"opacity: 0.5;\">" + imgFilename + "</a>" );//
 								
 									out.println( "<a href=\"/" + contextPath + "/download64?folder=" + imgFolderParam + "&file=" + imgFilename64 + "\" class=\"ImageFileLink\" target=\"_blank\" download>" );//
 									out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");					
 									out.println( "download" );
 									out.println( "</a>" );
-									out.println( "<img class=\"ImageFileImg\" src=\"/" + contextPath + "/download64?folder=" + imgFolderParam + "&file=" + imgFilename64 + "\" alt=\"no plugin for this image" + "\" >" );// style=\"width:304px;height:228px;\"
+									out.println( "<img class=\"ImageFileImg\" src=\"/" + contextPath + "/download64?folder=" + imgFolderParam + "&file=" + imgFilename64 + "\" alt=\"no plugin for this image" + "\" style=\"display: none;\">" );// style=\"width:304px;height:228px;\"
 											
 								out.println( "</li>" );	
 							}
@@ -347,13 +350,13 @@ else{
 						String imgFolderParam = "in";
 						
 						out.println( "<li class=\"ImageFileListItem\">" );
-						out.print( "<a href=\"javascript:void(0)\" onclick=\"display(this.nextSibling.nextSibling,this);\">" + imgFilename + "</a>" );//
+						out.print( "<a href=\"javascript:void(0)\" onclick=\"display(this.nextSibling.nextSibling,this);\" class=\"ImageFileToggler\" style=\"opacity: 0.5;\">" + imgFilename + "</a>" );//
 						
 							out.println( "<a href=\"/" + contextPath + "/download64?folder=" + imgFolderParam + "&file=" + imgFilename64 + "\" class=\"ImageFileLink\" target=\"_blank\" download>" );//
 							out.println( "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");					
 							out.println( "download" );
 							out.println( "</a>" );			
-							out.println( "<img class=\"ImageFileImg\" src=\"/" + contextPath + "/download64?folder=" + imgFolderParam + "&file=" + imgFilename64 + "\" alt=\"no plugin for this image" + "\" >" );// style=\"width:304px;height:228px;\"
+							out.println( "<img class=\"ImageFileImg\" src=\"/" + contextPath + "/download64?folder=" + imgFolderParam + "&file=" + imgFilename64 + "\" alt=\"no plugin for this image" + "\" style=\"display: none;\">" );// style=\"width:304px;height:228px;\"
 							
 						out.println( "</li>" );
 					}
