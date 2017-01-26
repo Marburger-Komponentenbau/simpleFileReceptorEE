@@ -89,11 +89,23 @@ public class UploadServlet extends HttpServlet {
 		File outFile = null;
 		for (Part filePart : fileParts) {
 			fileName = filePart.getSubmittedFileName();
-			InputStream fileContent = filePart.getInputStream();
-			//outFile = writeToFileSystem(folder, fileName, fileContent, helper);
-			outFile = StaticUtils.writeToFileSystem(new File(folder, fileName), fileContent);
-			convert(outFile, helper);			
-			fileContent.close();
+			boolean doWrite = true;
+			outFile = new File(folder, fileName);
+			if(outFile.exists()){
+//System.out.println("uploaded: " + filePart.getSize() + " | existing: " + outFile.length());			
+				doWrite = false;
+				if( filePart.getSize() != outFile.length() ){
+					if( outFile.delete() ){
+						doWrite = true;
+					}
+				}
+			}
+			if( doWrite ){
+				InputStream fileContent = filePart.getInputStream();
+				outFile = StaticUtils.writeToFileSystem(outFile, fileContent);
+				convert(outFile, helper);			
+				fileContent.close();
+			}
 			if (outFile != null) {
 				response.getWriter().append(outFile.getName() + "|");
 			}

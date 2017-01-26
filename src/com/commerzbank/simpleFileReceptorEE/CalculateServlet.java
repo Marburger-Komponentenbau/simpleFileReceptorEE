@@ -61,7 +61,7 @@ public class CalculateServlet extends HttpServlet {
 				continue;
 			}			
 			File tiffFile = new File(helper.getDataFolder(context), filename);
-			if(! tiffFile.exists() || ! tiffFile.canRead() ){
+			if(! tiffFile.exists() || ! tiffFile.canRead() || tiffFile.length() <= 0){
 				continue;
 			}
 			// tiffFile vorhanden...
