@@ -33,13 +33,14 @@ public class StaticUtils {
 	private File zipArchivFolder = null;
 	
 	// owner: Captiva
-	private String zipFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
+	//private String zipFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
+	private String zipFolderName = "E://RFSFileShare//DokImportKreditExtraktion//";
 	private File zipFolder = null;
 	
-	private String resultFolderName = "E://Apps//RechenkernMain//fileReceptorEE//data//";
+	private String resultFolderName = "E://RFSFileShare//Export_Result//SoapXML//4100//";
 	private File resultFolder = null;
 	
-	private String keySeparator = "_GHNW";
+	private String keySeparator = "4100_";
 	private String runIdSeparator = ".";
 	
 	private String i_view_Path = "";
@@ -196,7 +197,7 @@ public class StaticUtils {
 		return file;
 	}	
 	
-	public String getKeyOfFile(String fnameOrg) {
+	public String _getKeyOfFile(String fnameOrg) {
 		String fname = fnameOrg;	
 		int endIndex = fname.lastIndexOf(".");
 		// -1: kein treffer, 0: treffer ganz links also kein key, 1: kein Platz fur keyseparator
@@ -210,6 +211,23 @@ public class StaticUtils {
 		}	
 		return fname;
 	}	
+	
+	public String getKeyOfFile(String fnameOrg) {
+		String fname = fnameOrg;	
+		int endIndex = fname.lastIndexOf(".");
+		// -1: kein treffer, 0: treffer ganz links also kein key, 1: kein Platz fur keyseparator
+		if (endIndex > 1) {
+			fname = fname.substring(0, endIndex);
+		}
+		if (fname.startsWith(this.keySeparator)) {
+			fname = fname.substring(this.keySeparator.length(), fname.length());
+		}	
+		endIndex = fname.indexOf("_");
+		if (endIndex > 1) {
+			fname = fname.substring(0, endIndex);
+		}		
+		return fname;
+	}		
 	
 	public File deleteFile(File folder, String fname) {
 		File file = new File(folder, fname);

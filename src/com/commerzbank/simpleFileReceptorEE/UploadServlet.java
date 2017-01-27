@@ -90,7 +90,14 @@ public class UploadServlet extends HttpServlet {
 		for (Part filePart : fileParts) {
 			fileName = filePart.getSubmittedFileName();
 			boolean doWrite = true;
+			
+			if(     (fileName.toLowerCase().endsWith(".tif") || fileName.toLowerCase().endsWith(".pdf") || fileName.toLowerCase().endsWith(".tiff") )
+				&& !( fileName.startsWith("4100_") || fileName.startsWith("4102_") ) 
+			  ){
+				fileName = "4100_" + fileName;
+			}			
 			outFile = new File(folder, fileName);
+						
 			if(outFile.exists()){
 //System.out.println("uploaded: " + filePart.getSize() + " | existing: " + outFile.length());			
 				doWrite = false;

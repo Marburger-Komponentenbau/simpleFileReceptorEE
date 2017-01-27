@@ -170,7 +170,8 @@ div.Res {
 
 <div class="full_widthx"></div>
 <div class="kernelLogo">01-15-42&nbsp;|&nbsp;Risk Calculation Kernels</div>
-<div class="cobaLogo"><img src="https://portal.comproof.net/vpn/images/CoBa.png"></div> 
+<!-- <div class="cobaLogo"><img src="https://portal.comproof.net/vpn/images/CoBa.png"></div> -->
+<div class="cobaLogo"><img src="commerzbank.gif"></div>
 <div id="title">
 	<div class="title"><% out.print(contextPath); %></div> 
 	<div class="nav"><a href="./">documents</a>&nbsp;|&nbsp;<a href="upload.jsp">upload</a></div>

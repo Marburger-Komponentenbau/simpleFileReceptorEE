@@ -50,7 +50,8 @@ public class TransformServlet extends HttpServlet {
 						    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 						  + "<xsl:stylesheet version=\"1.0\""
 						  + "	xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\""
-						  + "	xmlns:SCAN=\"http://WSDLEntities.scan.zce.commerzbank.com/rk/Service.xsd\""
+//						  + "	xmlns:SCAN=\"http://WSDLEntities.scan.zce.commerzbank.com/rk/Service.xsd\""
+						  + "	xmlns:SCAN=\"http://wsdlentities.reco.zsr.commerzbank.com\""			
 						  + "	exclude-result-prefixes=\"SCAN\""
 						  + "	>"
 
@@ -65,13 +66,56 @@ public class TransformServlet extends HttpServlet {
 						  + "<xsl:template match=\"/\">"
 						  //+ "	<xsl:text>&lt;nav&gt;</xsl:text>"
 						  + "	<xsl:text>&lt;ul class=\"entities\"&gt;</xsl:text>"
+//						  + "	   <xsl:apply-templates select=\"SCAN:GetScoreRequest/SCAN:kernelStructureInput\" />"
+						  + "	   <xsl:apply-templates select=\"SCAN:getScore/SCAN:in\" />"
+//						  + "	   <xsl:apply-templates select=\"SCAN:GetScoreRequest/SCAN:kernelStructureInput/SCAN:entities\" />"
+						  + "	   <xsl:apply-templates select=\"SCAN:getScore/SCAN:in/SCAN:entities\" />"
+						  + "	   <xsl:apply-templates select=\"SCAN:getScore/in/entities\" />"
 						  + "	   <xsl:apply-templates select=\"SCAN:GetScoreResponse/SCAN:kernelStructureOutput\" />"
 						  + "	   <xsl:apply-templates select=\"SCAN:GetScoreResponse/SCAN:kernelStructureOutput/SCAN:entities\" />"
-						  + "	   <xsl:apply-templates select=\"SCAN:GetScoreRequest/SCAN:kernelStructureInput/SCAN:entities\" />"
 						  + "	   <xsl:apply-templates select=\"SCAN:GetScoreResponse/SCAN:kernelStructureOutput/SCAN:faults\" />"
 						  + "	<xsl:text>&lt;/ul&gt;</xsl:text>"
 						  //+ "	<xsl:text>&lt;/nav&gt;</xsl:text>"
 						  + "</xsl:template>"				  
+						  
+						  + "<xsl:template match=\"entities\">"
+						  //+ "		<xsl:for-each select=\"*//SCAN:entities\">"
+						  //+ "		<xsl:for-each select=\"SCAN:GetScoreResponse/SCAN:kernelStructureOutput/SCAN:entities\">" 
+						  //+ "		<xsl:for-each select=\"SCAN:GetScoreRequest/SCAN:kernelStructureInput/SCAN:entities\">"
+						  + "			 <xsl:text>&lt;li class=\"entity\"&gt;</xsl:text>"
+						  + "			    <xsl:text>&lt;a href=\"javascript:void(0)\" onclick=\"display(this,this);\" &gt;</xsl:text>"
+						  + "				   <xsl:value-of select=\"name\"/>"
+						  + "			    <xsl:text>&lt;/a&gt;</xsl:text>"
+						  + "				<xsl:text>&lt;table class=\"values\"&gt;</xsl:text>"
+						  + "					<xsl:for-each select=\"values\">"
+
+//+ "<xsl:if test=\"name != 'AVBeitrag_TW'\">"
+//+ "<xsl:variable name=\"v_name\" select=\"name\"/>"
+
+//+ "<xsl:if test=\"not(ends-with($v_name, '_TW'))\">"
+
+//+ "<xsl:if test=\"starts-with(name, 'A')\">"
+
+
+						  + "						<xsl:text>&lt;tr&gt;</xsl:text>"
+						  + "							<xsl:text>&lt;td&gt;</xsl:text>"
+						  + "								<xsl:value-of select=\"name\"/>"
+						  + "							<xsl:text>&lt;/td&gt;</xsl:text>"
+						  + "							<xsl:text>&lt;td&gt;</xsl:text>"
+						  + "								<xsl:value-of select=\"value\"/>"
+						  + "							<xsl:text>&lt;/td&gt;</xsl:text>"
+						  + "						<xsl:text>&lt;/tr&gt;</xsl:text>"
+						  
+//+ "</xsl:if>"
+						  
+						  + "					</xsl:for-each>"
+						  + "				<xsl:text>&lt;/table&gt;</xsl:text>"
+						  + "	            <xsl:text>&lt;ul class=\"entities\"&gt;</xsl:text>"
+						  + "			       <xsl:apply-templates select=\"entities\" />"
+						  + "	            <xsl:text>&lt;/ul&gt;</xsl:text>"
+						  + "			<xsl:text>&lt;/li&gt;</xsl:text>"
+						  //+ "		</xsl:for-each>"
+						  + "</xsl:template>"						  
 						  
 						  + "<xsl:template match=\"SCAN:entities\">"
 						  //+ "		<xsl:for-each select=\"*//SCAN:entities\">"
@@ -104,7 +148,6 @@ public class TransformServlet extends HttpServlet {
 						  + "			 <xsl:text>&lt;li class=\"entity\"&gt;</xsl:text>"
 						  + "			    <xsl:text>&lt;a href=\"javascript:void(0)\" onclick=\"display(this,this);\" &gt;</xsl:text>"
 						  + "			       <xsl:text>Fault</xsl:text>"
-						  + "				   <xsl:value-of select=\"SCAN:name\"/>"
 						  + "			    <xsl:text>&lt;/a&gt;</xsl:text>"
 						  + "				<xsl:text>&lt;table class=\"values\"&gt;</xsl:text>"
 						  + "						<xsl:text>&lt;tr&gt;</xsl:text>"
@@ -122,8 +165,7 @@ public class TransformServlet extends HttpServlet {
 						  + "<xsl:template match=\"SCAN:kernelStructureOutput\">"
 						  + "			 <xsl:text>&lt;li class=\"entity\"&gt;</xsl:text>"
 						  + "			    <xsl:text>&lt;a href=\"javascript:void(0)\" onclick=\"display(this,this);\" &gt;</xsl:text>"
-						  + "			       <xsl:text>Version</xsl:text>"
-						  + "				   <xsl:value-of select=\"SCAN:name\"/>"
+						  + "			       <xsl:text>kernelVersion</xsl:text>"
 						  + "			    <xsl:text>&lt;/a&gt;</xsl:text>"
 						  + "				<xsl:text>&lt;table class=\"values\"&gt;</xsl:text>"
 						  + "						<xsl:text>&lt;tr&gt;</xsl:text>"
@@ -138,6 +180,36 @@ public class TransformServlet extends HttpServlet {
 						  + "			<xsl:text>&lt;/li&gt;</xsl:text>"
 						  + "</xsl:template>"	
 
+//						  + "<xsl:template match=\"SCAN:kernelStructureInput\">"
+						  + "<xsl:template match=\"SCAN:in\">"
+						  + "			 <xsl:text>&lt;li class=\"entity\"&gt;</xsl:text>"
+						  + "			    <xsl:text>&lt;a href=\"javascript:void(0)\" onclick=\"display(this,this);\" &gt;</xsl:text>"
+						  + "			       <xsl:text>kernelStructureInput</xsl:text>"
+						  + "			    <xsl:text>&lt;/a&gt;</xsl:text>"
+						  + "				<xsl:text>&lt;table class=\"values\"&gt;</xsl:text>"
+						  + "						<xsl:text>&lt;tr&gt;</xsl:text>"
+						  + "							<xsl:text>&lt;td&gt;</xsl:text>"
+						  + "								<xsl:text>clientVersion</xsl:text>"
+						  + "							<xsl:text>&lt;/td&gt;</xsl:text>"
+						  + "							<xsl:text>&lt;td&gt;</xsl:text>"
+						  + "								<xsl:value-of select=\"SCAN:clientVersion\"/>"
+						  + "							<xsl:text>&lt;/td&gt;</xsl:text>"
+						  + "						<xsl:text>&lt;/tr&gt;</xsl:text>"
+						  
+						  + "						<xsl:text>&lt;tr&gt;</xsl:text>"
+						  + "							<xsl:text>&lt;td&gt;</xsl:text>"
+						  + "								<xsl:text>calcDate</xsl:text>"
+						  + "							<xsl:text>&lt;/td&gt;</xsl:text>"
+						  + "							<xsl:text>&lt;td&gt;</xsl:text>"
+						  + "								<xsl:value-of select=\"SCAN:calcDate\"/>"
+						  + "							<xsl:text>&lt;/td&gt;</xsl:text>"
+						  + "						<xsl:text>&lt;/tr&gt;</xsl:text>"						  
+						  
+						  + "				<xsl:text>&lt;/table&gt;</xsl:text>"
+						  + "			<xsl:text>&lt;/li&gt;</xsl:text>"
+						  + "</xsl:template>"						  
+						  
+						  
 						  + "</xsl:stylesheet>"
 				);
     }
@@ -155,6 +227,7 @@ public class TransformServlet extends HttpServlet {
 		
 		StaticUtils helper = StaticUtils.getInstance();
 		File file = new File(helper.getResFolder(), fileName);
+		//File file = new File("C:\\dev\\Projekte\\EclipseEE_WS\\simpleFileReceptorEE\\request_00000001.xml");
 		for(int i = 0; ! file.exists() && i < 7; i++){
 			try {
 				Thread.sleep(1500);
@@ -184,7 +257,9 @@ public class TransformServlet extends HttpServlet {
 		} catch (TransformerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}        
+		} 
+        //streamRes.getWriter().write("Schluss");
+        
 		out.flush();		
 	}
 

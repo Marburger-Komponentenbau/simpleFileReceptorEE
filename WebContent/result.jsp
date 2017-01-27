@@ -24,7 +24,6 @@ else{
 <script type="text/javascript" src="./splitter.js"></script>
 
 <script type="text/javascript">
-
 function loadXMLTransformed(btn, file, target, repLink) {
     var xmlhttp;
 	var node = document.getElementById(target);
@@ -55,6 +54,7 @@ function loadXMLTransformed(btn, file, target, repLink) {
   			  node.style.display = 'block';
   			  btnNode.style.opacity = 1;
   		   }
+           //alert(xmlhttp.responseText);
            if(xmlhttp.status == 200){
         	   if(repLink){
             	   node.innerHTML = "<p class=\"center\"><a href=\"./report?folder=xml&file=".concat(file).concat("\" class=\"xmlLoadButton\" target=\"_blank\" download>download report</a></p>").concat(xmlhttp.responseText);        		   
@@ -249,7 +249,8 @@ a.ImageFileToggler {
  
 <div class="full_widthx"></div>
 <div class="kernelLogo">01-15-42&nbsp;|&nbsp;Risk Calculation Kernels</div>
-<div class="cobaLogo"><img src="https://portal.comproof.net/vpn/images/CoBa.png"></div> 
+<!-- <div class="cobaLogo"><img src="https://portal.comproof.net/vpn/images/CoBa.png"></div> -->
+<div class="cobaLogo"><img src="commerzbank.gif"></div>
 <div id="title">
 	<div class="title"><% out.print(contextPath); %></div> 
 	<div class="nav"><a href="./">documents</a>&nbsp;|&nbsp;<a href="upload.jsp">upload</a></div>
@@ -368,6 +369,7 @@ else{
 		
 		out.println("<div class=\"RightPane\">" );
 		String requestXmlFilename = "request_" + caseKey + ".xml";
+		//String requestXmlFilename = "request_3244715132_7301241_0012618683.xml";
 		out.println(
 				     "<div class=\"RecognitionResultAndLink\">" + 
 					 "<a href=\"javascript:loadXMLTransformed('RecognitionLink','" + requestXmlFilename +
@@ -375,7 +377,8 @@ else{
 		             " class=\"xmlLoadButton\" id=\"RecognitionLink\">Recognition Result" + "</a>:&nbsp;<br/>" + requestXmlFilename  +
 				     "<div id=\"" + requestXmlFilename + "\" class=\"RecognitionResult\"></div>" +  
 				     "</div>" 
-					);		
+					);	
+		/*
 		String responseXmlFilename = "response_" + caseKey + ".xml";
 		out.println(
 				     "<div class=\"KernelResponseAndLink\">" + 
@@ -387,6 +390,7 @@ else{
 					 "<div id=\"" + responseXmlFilename + "\" class=\"KernelResponse\"></div>" + 
 					 "</div>" 
 					);	
+		*/
 		out.println( "</div>" ); // RightPane
 		
 	    out.println( "</div>" ); // Splitter
